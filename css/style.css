@@ -452,7 +452,7 @@ body.about { background: #040507; --cine: 'Cinzel', 'Trajan Pro', Georgia, serif
    ========================================================= */
 body.work { overflow: hidden; height: 100svh; background: #000; overscroll-behavior: none; touch-action: none; }
 .street-wrap { position: fixed; inset: 0; overflow: hidden; }
-#street { position: absolute; inset: 0; width: 100%; height: 100%; transform-origin: 0 0; will-change: transform; filter: blur(.35px) saturate(.95); }
+#street { position: absolute; inset: 0; width: 100%; height: 100%; display: block; background: #0b0f16; }
 .street-fade { position: fixed; inset: 0; background: #000; opacity: 0; pointer-events: none; z-index: 5; transition: opacity .35s; }
 .walk-title { position: fixed; left: 50%; top: 22%; transform: translateX(-50%); z-index: 6; text-align: center; pointer-events: none; transition: opacity .8s, transform .8s; }
 .walk-title h1 { font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: clamp(44px, 8vw, 96px); letter-spacing: .14em; text-transform: uppercase; color: #fff8ea; margin: 0; text-shadow: 0 0 2px rgba(0,0,0,.9), 0 0 6px rgba(0,0,0,.75), 0 0 14px rgba(0,0,0,.55), 0 2px 24px rgba(0,0,0,.45); }
@@ -462,23 +462,39 @@ body.work { overflow: hidden; height: 100svh; background: #000; overscroll-behav
 @keyframes wheel { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(8px); opacity: 0; } }
 .walk-title.gone { opacity: 0; transform: translate(-50%, -14px); }
 
-/* the buzzer: an intercom plate by the door */
-.buzz { position: fixed; z-index: 7; left: 0; top: 0; display: inline-flex; align-items: center; gap: 16px; padding: 14px 24px 14px 14px; cursor: pointer; --acc: #ffcf5a;
-  background: linear-gradient(160deg, #3a3d44, #1d1f24); border: 1px solid #5a5e66; border-radius: 8px; color: #f3efe6; box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
-  transform: translate(-50%, 0); opacity: 0; transition: opacity .25s; }
-.buzz.show { opacity: 1; }
-.buzz-btn { position: relative; width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffe7a8, #c9932f 55%, #6b4a12); box-shadow: 0 0 0 3px #2a2c31, 0 0 0 4px #5a5e66; transition: transform .12s, box-shadow .2s; }
-.buzz-txt { display: flex; flex-direction: column; text-align: left; line-height: 1.15; }
-.buzz-txt small { font-family: var(--mono); font-size: 11px; letter-spacing: .24em; text-transform: uppercase; color: #b8b2a4; }
-.buzz-txt b { font-family: var(--mono); font-weight: 600; font-size: 18px; }
-.buzz-btn::after { content: ''; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid var(--acc); animation: buzzPulse 1.6s ease-out infinite; }
-@keyframes buzzPulse { 0% { transform: scale(.8); opacity: .9; } 100% { transform: scale(1.7); opacity: 0; } }
-.buzz { border-color: color-mix(in srgb, var(--acc) 60%, #5a5e66); box-shadow: 0 0 0 1px rgba(0,0,0,.4), 0 0 26px color-mix(in srgb, var(--acc) 35%, transparent), 0 12px 34px rgba(0,0,0,.5); }
+/* the door tag: a quiet label pinned above the entrance */
+.door-tag { position: fixed; z-index: 7; left: 0; top: 0; --acc: var(--accent); --stem: 50%; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-width: 300px; max-width: min(380px, calc(100vw - 28px)); padding: 14px 18px 14px 20px; text-align: left; color: var(--text); cursor: pointer;
+  background: rgba(8, 10, 14, .78); -webkit-backdrop-filter: blur(10px) saturate(1.2); backdrop-filter: blur(10px) saturate(1.2); border: 1px solid rgba(255,255,255,.13); border-radius: 12px; box-shadow: 0 18px 50px rgba(0,0,0,.45), inset 3px 0 0 var(--acc);
+  opacity: 0; transition: opacity .35s, box-shadow .2s, border-color .2s; will-change: transform; }
+.door-tag.show { opacity: 1; }
+.door-tag::after { content: ''; position: absolute; top: var(--sy, 50%); height: 1px; width: var(--reach, 40px); }
+.door-tag.to-r::after { left: 100%; background: linear-gradient(90deg, rgba(255,255,255,.6), rgba(255,255,255,.15)); }
+.door-tag.to-l::after { right: 100%; background: linear-gradient(270deg, rgba(255,255,255,.6), rgba(255,255,255,.15)); }
+.door-tag::before { content: ''; position: absolute; top: calc(var(--sy, 50%) - 4px); width: 9px; height: 9px; border-radius: 50%; background: var(--acc); animation: tagPulse 1.8s ease-out infinite; }
+.door-tag.to-r::before { left: calc(100% + var(--reach, 40px) - 4px); }
+.door-tag.to-l::before { right: calc(100% + var(--reach, 40px) - 5px); }
+.door-tag.flat::after, .door-tag.flat::before { display: none; }
+@keyframes tagPulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--acc) 60%, transparent); } 100% { box-shadow: 0 0 0 12px transparent; } }
+.door-tag .dt-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--acc); }
+.door-tag .dt-org { font-family: var(--sans); font-weight: 650; font-size: 19px; letter-spacing: -.01em; line-height: 1.2; }
+.door-tag .dt-role { font-family: var(--mono); font-size: 12px; color: #aab4c4; }
+.door-tag .dt-foot { display: flex; align-items: center; justify-content: space-between; gap: 18px; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.08); }
+.door-tag .dt-date { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.door-tag .dt-go { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: .04em; color: #0b0e14; background: var(--acc); border-radius: 999px; padding: 6px 12px; display: inline-flex; gap: 8px; align-items: center; transition: transform .2s; }
+.door-tag .dt-go i { font-style: normal; transition: transform .2s; }
+.door-tag:hover { border-color: color-mix(in srgb, var(--acc) 55%, rgba(255,255,255,.2)); }
+.door-tag:hover .dt-go i { transform: translateX(3px); }
+.door-tag:focus-visible { outline: 2px solid var(--acc); outline-offset: 3px; }
+.door-tag[hidden] { display: none !important; }
+.street-load { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-family: var(--mono); font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); transition: opacity .5s; }
+.gl-ready .street-load { opacity: 0; }
+.no-gl .street-load { display: none; }
+.wm-logo span { display: none; font-family: 'Cinzel', Georgia, serif; font-weight: 700; font-size: 30px; color: var(--acc, #fff); }
+.wm-logo.none { background: #10141c; border: 1px solid color-mix(in srgb, var(--acc, #fff) 50%, transparent); }
+.wm-logo.none span { display: block; }
 .walk-pass { position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%); z-index: 6; display: inline-flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; letter-spacing: .12em; color: #fff; text-shadow: 0 0 2px #000, 0 0 6px rgba(0,0,0,.8); }
 .walk-pass[hidden] { display: none; }
 .walk-pass .ring { --p: 0; width: 18px; height: 18px; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--p) * 360deg), rgba(255,255,255,.25) 0); -webkit-mask: radial-gradient(circle, transparent 5px, #000 5.5px); mask: radial-gradient(circle, transparent 5px, #000 5.5px); }
-.buzz:hover .buzz-btn { box-shadow: 0 0 0 3px #2a2c31, 0 0 0 4px #ffcf5a, 0 0 18px rgba(255,207,90,.6); }
-.buzz:active .buzz-btn { transform: scale(.9); }
 
 /* where everything is on the street */
 .work .street-wrap::after { content: ''; position: absolute; inset: auto 0 0 0; height: 140px; background: linear-gradient(transparent, rgba(3,4,7,.7)); pointer-events: none; }
@@ -497,7 +513,7 @@ body.work { overflow: hidden; height: 100svh; background: #000; overscroll-behav
 .walk-end div { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
 /* inside: the modal */
-.wmodal[hidden], .buzz[hidden], .walk-end[hidden] { display: none !important; }
+.wmodal[hidden], .walk-end[hidden] { display: none !important; }
 .wmodal { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 70px 16px 20px; background: rgba(3,4,6,.78); backdrop-filter: blur(6px); opacity: 0; transition: opacity .35s; }
 .wmodal.show { opacity: 1; }
 .wm-card { width: min(680px, 100%); max-height: calc(100svh - 100px); overflow: auto; background: linear-gradient(180deg, #10141c, #0b0e14); border: 1px solid var(--line-2); border-radius: 16px; padding: 28px clamp(20px, 4vw, 36px) 26px; box-shadow: 0 40px 120px rgba(0,0,0,.6); transform: translateY(14px); transition: transform .4s cubic-bezier(.2,.7,.2,1); }
