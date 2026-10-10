@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amaan Vora — Data Scientist</title>
+  <meta name="description" content="Amaan Vora — data scientist and ML engineer. Interactive projects, work and certifications.">
+  <link rel="icon" href="assets/img/av-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+
+  <!-- HERO -->
+  <header class="hero" id="hero">
+    <canvas class="bg" id="heroCanvas" aria-hidden="true"></canvas>
+    <div class="vignette"></div>
+    <div class="wrap">
+      <div class="term-lines" id="termLines" aria-hidden="true"></div>
+      <h1 class="headline" id="headline" aria-label="Turning noise into signal."></h1>
+      <p class="sub" id="heroSub"></p>
+      <div class="socials" data-socials></div>
+    </div>
+    <div class="scroll-cue">SCROLL<i></i></div>
+  </header>
+
+  <!-- ABOUT -->
+  <section class="about-strip section" id="about">
+    <canvas id="aboutCanvas" aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">about</p>
+        <h2 class="title">Statistics brain,<br>engineer’s hands.</h2>
+        <p class="big" id="aboutShort"></p>
+        <a class="btn" href="about.html">the full story <span class="arr">→</span></a>
+      </div>
+      <div class="about-card reveal d2">
+        <div class="row"><span class="k">based</span><span class="v">New Jersey, USA</span></div>
+        <div class="row"><span class="k">ms</span><span class="v">Statistics (Data Science) · Rutgers</span></div>
+        <div class="row"><span class="k">btech</span><span class="v">Computer Science · SRM</span></div>
+        <div class="row"><span class="k">stack</span><span class="v">Python · R · SQL · PyTorch · AWS</span></div>
+        <div class="row"><span class="k">likes</span><span class="v">♞ ♫ 🎾 comics</span></div>
+        <div class="row"><span class="k">status</span><span class="v accent">open to interesting problems</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section class="section" id="projects">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">projects</p>
+          <h2 class="title">Things you can poke at.</h2>
+          <p class="lede">Every project has a live lab — real models running in your browser, not screenshots.</p>
+        </div>
+        <a class="btn" href="projects.html">all projects <span class="arr">→</span></a>
+      </div>
+      <div class="cards" id="featured"></div>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="section" id="work" style="padding-top:20px">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">work</p>
+          <h2 class="title">Where I’ve shipped.</h2>
+        </div>
+      </div>
+      <div class="timeline-scroller">
+        <div class="timeline" id="timeline"><div class="axis"><i></i></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTS -->
+  <section class="section" id="certs" style="padding-top:20px">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <p class="eyebrow">portfolio &amp; certifications</p>
+          <h2 class="title">Paper trail.</h2>
+        </div>
+      </div>
+      <div class="certs" id="certGrid"></div>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox"><figure><img alt=""><figcaption></figcaption></figure></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/minis.js"></script>
+  <script src="js/home.js"></script>
+</body>
+</html>

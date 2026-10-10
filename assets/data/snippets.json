@@ -1,0 +1,380 @@
+{
+"stockbroker": {
+"rsi": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "calculate_rsi()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def calculate_rsi(prices, window=14):\n    \"\"\"Calculate Relative Strength Index.\"\"\"\n    if len(prices) < window + 1:\n        return np.full(len(prices), 50)  # Return neutral RSI if insufficient data\n\n    delta = np.diff(prices)\n    gains = np.where(delta > 0, delta, 0)\n    losses = np.where(delta < 0, -delta, 0)\n\n    avg_gains = rolling_mean(gains, window)\n    avg_losses = rolling_mean(losses, window)\n\n    rs = safe_divide(avg_gains, avg_losses, 0)\n    rsi = 100 - (100 / (1 + rs))\n    return np.concatenate([[50], rsi])  # First value default"
+},
+"macd": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "calculate_macd()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def calculate_macd(prices, fast=12, slow=26, signal=9):\n    \"\"\"Calculate MACD indicator.\"\"\"\n    if len(prices) < max(fast, slow, signal):\n        # Return zeros if insufficient data\n        return np.zeros(len(prices)), np.zeros(len(prices)), np.zeros(len(prices))\n\n    ema_fast = pd.Series(prices).ewm(span=fast, adjust=False).mean().values\n    ema_slow = pd.Series(prices).ewm(span=slow, adjust=False).mean().values\n\n    macd_line = ema_fast - ema_slow\n    signal_line = pd.Series(macd_line).ewm(span=signal, adjust=False).mean().values\n    histogram = macd_line - signal_line\n\n    return macd_line, signal_line, histogram"
+},
+"bb": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "calculate_bollinger_bands()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def calculate_bollinger_bands(prices, window=20, num_std=2):\n    \"\"\"Calculate Bollinger Bands.\"\"\"\n    if len(prices) < window:\n        # Return price as middle band if insufficient data\n        return prices, prices, prices\n\n    sma = rolling_mean(prices, window)\n    std = rolling_std(prices, window)\n\n    upper_band = sma + (std * num_std)\n    lower_band = sma - (std * num_std)\n\n    return upper_band, sma, lower_band\n# ====================================================================\n# DATA LOADER CLASS (FIXED)\n# ===================================================================="
+},
+"features": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "FeatureEngineer.create_technical_features()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Price-based indicators\ndf['RSI'] = calculate_rsi(prices)\nmacd, macd_signal, macd_hist = calculate_macd(prices)\ndf['MACD'] = macd\ndf['MACD_Signal'] = macd_signal\ndf['MACD_Hist'] = macd_hist\n\nbb_upper, bb_middle, bb_lower = calculate_bollinger_bands(prices)\ndf['BB_Upper'] = bb_upper\ndf['BB_Middle'] = bb_middle\ndf['BB_Lower'] = bb_lower\n\n# Volatility indicators\ndf['ATR'] = self._calculate_atr(highs, lows, prices)\n\n# Rolling volatilities with proper window sizing\nvol_windows = [5, 20, 60]\nfor window in vol_windows:\n    actual_window = min(window, len(df) // 3)  # Adaptive window\n    if actual_window >= 2:\n        df[f'Volatility_{window}'] = df['Returns'].rolling(actual_window).std()\n\n# Volume indicators\nvol_window = min(20, len(df) // 2)\nif vol_window >= 2:\n    df['Volume_MA'] = df['Volume'].rolling(vol_window).mean()\n    df['Volume_Ratio'] = df['Volume'] / df['Volume_MA']\n    df['Volume_Ratio'] = df['Volume_Ratio'].fillna(1.0)\nelse:\n    df['Volume_MA'] = df['Volume']\n    df['Volume_Ratio'] = 1.0\n\n# Price patterns (Moving Averages)\nma_windows = [5, 20, 50, 200]\nfor window in ma_windows:\n    actual_window = min(window, len(df) // 2)\n    if actual_window >= 2:\n        df[f'Price_MA_{window}'] = df['Close'].rolling(actual_window).mean()\n    else:\n        df[f'Price_MA_{window}'] = df['Close']\n\n# Momentum indicators\nroc_windows = [5, 20]\nfor window in roc_windows:\n    if len(df) > window:\n        df[f'ROC_{window}'] = df['Close'].pct_change(window)\n    else:\n        df[f'ROC_{window}'] = 0"
+},
+"regime": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "FeatureEngineer.detect_market_regimes()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Standardize features\nscaler = StandardScaler()\nscaled_features = scaler.fit_transform(all_features)\n\n# Cluster into regimes (Bull, Bear, Sideways)\nn_regimes = min(3, len(all_features) // 10)  # Adaptive number of regimes\nif n_regimes < 2:\n    n_regimes = 2\n\nkmeans = KMeans(n_clusters=n_regimes, random_state=42, n_init=10)\nregimes = kmeans.fit_predict(scaled_features)"
+},
+"trend": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._trend_forecast_realistic()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _trend_forecast_realistic(self, prices, horizon, recent_return, volatility):\n    \"\"\"Realistic trend forecast with proper volatility.\"\"\"\n    try:\n        current_price = prices.iloc[-1]\n\n        # Calculate trend with regression\n        x = np.arange(len(prices.tail(30)))  # Use recent 30 days\n        y = prices.tail(30).values\n\n        if len(x) >= 10:\n            slope, intercept, r_value, _, _ = stats.linregress(x, y)\n\n            # Adjust trend based on R-squared (trend strength)\n            trend_strength = r_value ** 2\n            adjusted_slope = slope * trend_strength\n\n            # Create forecasts with trend and volatility\n            forecasts = []\n            for h in range(1, horizon + 1):\n                # Base forecast from trend\n                trend_forecast = current_price + (adjusted_slope * h)\n\n                # Add small random walk component\n                random_component = np.random.normal(0, volatility * current_price * np.sqrt(h) * 0.1)\n\n                forecast = max(trend_forecast + random_component, current_price * 0.5)  # Prevent unrealistic drops\n                forecasts.append(forecast)\n\n            return forecasts\n        else:\n            # Fallback to simple trend\n            return [current_price * (1 + recent_return) ** h for h in range(1, horizon + 1)]\n\n    except Exception as e:\n    # \u2026 (trimmed)"
+},
+"mr": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._mean_reversion_forecast()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _mean_reversion_forecast(self, prices, horizon):\n    \"\"\"Mean reversion forecast.\"\"\"\n    try:\n        current_price = prices.iloc[-1]\n        long_mean = prices.tail(60).mean() if len(prices) >= 60 else prices.mean()\n\n        # Calculate reversion speed (how quickly price returns to mean)\n        reversion_speed = 0.1  # 10% reversion per period\n\n        forecasts = []\n        for h in range(1, horizon + 1):\n            # Move towards long-term mean\n            forecast = current_price + (long_mean - current_price) * (1 - np.exp(-reversion_speed * h))\n            forecasts.append(forecast)\n\n        return forecasts\n\n    except Exception as e:\n        print(f\"\u26a0\ufe0f Mean reversion forecast error: {e}\")\n        return [prices.iloc[-1]] * horizon"
+},
+"es": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._exp_smoothing_forecast_enhanced()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _exp_smoothing_forecast_enhanced(self, prices, horizon):\n    \"\"\"Enhanced exponential smoothing forecast.\"\"\"\n    try:\n        # Use double exponential smoothing for trend\n        alpha = 0.3  # Level smoothing\n        beta = 0.1   # Trend smoothing\n\n        # Initialize\n        level = prices.iloc[0]\n        trend = (prices.iloc[1] - prices.iloc[0]) if len(prices) > 1 else 0\n\n        # Update through the series\n        for i in range(1, len(prices)):\n            previous_level = level\n            level = alpha * prices.iloc[i] + (1 - alpha) * (level + trend)\n            trend = beta * (level - previous_level) + (1 - beta) * trend\n\n        # Generate forecasts\n        forecasts = []\n        for h in range(1, horizon + 1):\n            forecast = level + h * trend\n            forecasts.append(forecast)\n\n        return forecasts\n\n    except Exception as e:\n        print(f\"\u26a0\ufe0f Exponential smoothing error: {e}\")\n        return [prices.iloc[-1]] * horizon"
+},
+"ma": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._ma_forecast_enhanced()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _ma_forecast_enhanced(self, prices, horizon):\n    \"\"\"Enhanced moving average forecast with momentum.\"\"\"\n    try:\n        # Calculate multiple MAs\n        ma_20 = prices.tail(20).mean() if len(prices) >= 20 else prices.mean()\n        ma_5 = prices.tail(5).mean() if len(prices) >= 5 else prices.mean()\n\n        # Determine momentum direction\n        momentum = (ma_5 - ma_20) / ma_20 if ma_20 != 0 else 0\n\n        # Generate forecasts\n        forecasts = []\n        for h in range(1, horizon + 1):\n            # Base forecast on MA20 with momentum adjustment\n            forecast = ma_20 * (1 + momentum * 0.1 * h)  # Modest momentum impact\n            forecasts.append(forecast)\n\n        return forecasts\n\n    except Exception as e:\n        print(f\"\u26a0\ufe0f MA forecast error: {e}\")\n        return [prices.iloc[-1]] * horizon"
+},
+"arima": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._arima_forecast_safe()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _arima_forecast_safe(self, prices, horizon):\n    \"\"\"ARIMA forecast with comprehensive error handling.\"\"\"\n    try:\n        model = pm.auto_arima(\n            prices,\n            seasonal=False,\n            stepwise=True,\n            suppress_warnings=True,\n            max_p=3, max_q=3, max_d=2,  # Limit complexity for stability\n            error_action='ignore'\n        )\n        forecast = model.predict(n_periods=horizon)\n        return forecast.tolist()\n    except Exception as e:\n        print(f\"\u26a0\ufe0f ARIMA forecast error: {e}\")\n        # Fallback to trend forecast\n        return self._trend_forecast_realistic(prices, horizon, 0.001, 0.02)"
+},
+"ens": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "Forecaster._create_ensemble_forecast()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _create_ensemble_forecast(self, forecasts_dict, horizon):\n    \"\"\"Create ensemble forecast from multiple methods.\"\"\"\n    try:\n        if not forecasts_dict:\n            return [0] * horizon\n\n        # Weights for different methods (sum to 1.0)\n        method_weights = {\n            'Trend_Forecast': 0.3,\n            'MeanReversion_Forecast': 0.2,\n            'ES_Forecast': 0.25,\n            'MA_Forecast': 0.15,\n            'ARIMA_Forecast': 0.1 if 'ARIMA_Forecast' in forecasts_dict else 0\n        }\n\n        # Normalize weights if ARIMA not available\n        if 'ARIMA_Forecast' not in forecasts_dict:\n            total_weight = sum(method_weights.values()) - 0.1\n            for key in method_weights:\n                if key != 'ARIMA_Forecast':\n                    method_weights[key] = method_weights[key] / total_weight\n\n        ensemble_forecast = [0] * horizon\n\n        for method, weight in method_weights.items():\n            if method in forecasts_dict and forecasts_dict[method]:\n                forecast_values = forecasts_dict[method]\n                for i in range(min(horizon, len(forecast_values))):\n                    ensemble_forecast[i] += weight * forecast_values[i]\n\n        return ensemble_forecast\n\n    except Exception as e:\n        print(f\"\u26a0\ufe0f Ensemble forecast error: {e}\")\n        # \u2026 (trimmed)"
+},
+"mlfeat": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "MLPredictor.prepare_ml_data()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "feature_cols = [\n    'RSI', 'MACD', 'MACD_Signal', 'MACD_Hist',\n    'Volatility_5', 'Volatility_20', 'Volume_Ratio',\n    'ROC_5', 'ROC_20', 'Market_Correlation', 'Market_Regime'\n]\n\n# Add moving average features if available\nma_cols = [col for col in df.columns if 'Price_MA_' in col]\nfeature_cols.extend(ma_cols[:2])  # Limit to avoid overfitting"
+},
+"rf": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "MLPredictor.train_models()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Time series split (respects temporal order)\nsplit_idx = int(len(X) * 0.8)\nX_train, X_test = X.iloc[:split_idx], X.iloc[split_idx:]\n\ny_price_train, y_price_test = y_price_1d.iloc[:split_idx], y_price_1d.iloc[split_idx:]\ny_dir_train, y_dir_test = y_direction_1d.iloc[:split_idx], y_direction_1d.iloc[split_idx:]\ny_ret_train, y_ret_test = y_return_1d.iloc[:split_idx], y_return_1d.iloc[split_idx:]\n\nif len(X_train) < 10 or len(X_test) < 5:\n    print(f\"\u26a0\ufe0f Insufficient train/test data for {ticker}\")\n    continue\n\n# Scale features\nscaler = StandardScaler()\nX_train_scaled = scaler.fit_transform(X_train)\nX_test_scaled = scaler.transform(X_test)\n\nticker_predictions = {}\n\n# 1. Random Forest models (robust and interpretable)\nrf_params = {\n    'n_estimators': 100 if not FAST_DEMO else 50,\n    'max_depth': min(10, len(dataset['features'])),\n    'min_samples_split': max(5, len(X_train) // 20),\n    'min_samples_leaf': max(2, len(X_train) // 50),\n    'random_state': 42\n}\n\n# Price prediction model\nrf_price = RandomForestRegressor(**rf_params)\nrf_price.fit(X_train_scaled, y_price_train)\nprice_pred = rf_price.predict(X_test_scaled)\n\n# Direction prediction model\nrf_direction = RandomForestClassifier(**rf_params)\nrf_direction.fit(X_train_scaled, y_dir_train)\ndir_pred = rf_direction.predict(X_test_scaled)\ndir_prob = rf_direction.predict_proba(X_test_scaled)[:, 1] if rf_direction.classes_.max() == 1 else 0.5\n\n# Return prediction model (often more stable)\nrf_return = RandomForestRegressor(**rf_params)\nrf_return.fit(X_train_scaled, y_ret_train)\nreturn_pred = rf_return.predict(X_test_scaled)"
+},
+"opt": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "PortfolioOptimizer._scipy_optimization_enhanced()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Objective function: negative Sharpe ratio\ndef objective(weights):\n    portfolio_return = np.sum(weights * mu)\n    portfolio_vol = np.sqrt(np.dot(weights, np.dot(Sigma, weights)))\n\n    if portfolio_vol < 1e-6:\n        return -portfolio_return\n\n    sharpe = portfolio_return / portfolio_vol\n\n    # Add penalty for extreme weights (encourage diversification)\n    concentration_penalty = np.sum(weights ** 2) * 0.1\n\n    return -(sharpe - concentration_penalty)\n\n# Constraints\nconstraints = [\n    {'type': 'eq', 'fun': lambda x: np.sum(x) - 1},  # Fully invested\n]\n\n# Bounds: minimum 1%, maximum 40% per asset\nbounds = [(0.01, 0.40) for _ in range(n_assets)]\n\n# Initial guess: equal weight\nx0 = np.array([1.0 / n_assets] * n_assets)"
+},
+"why": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "PortfolioOptimizer._generate_allocation_reasoning()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Individual asset reasoning\nfor ticker, weight in sorted_weights:\n    try:\n        individual_reasoning = []\n\n        # Weight-based reasoning\n        if weight > 0.25:\n            individual_reasoning.append(f\"Major position ({weight:.1%}) - high conviction allocation\")\n        elif weight > 0.15:\n            individual_reasoning.append(f\"Significant position ({weight:.1%}) - core holding\")\n        else:\n            individual_reasoning.append(f\"Supporting position ({weight:.1%}) - diversification benefit\")\n\n        # Performance-based reasoning\n        if ticker in returns_df.columns:\n            ticker_return = returns_df[ticker].mean() * 252\n            ticker_vol = returns_df[ticker].std() * np.sqrt(252)\n\n            if ticker_return > returns_df.mean().mean() * 252:\n                individual_reasoning.append(f\"Above-average expected return ({ticker_return:.1%} annual)\")\n\n            if ticker_vol < returns_df.std().mean() * np.sqrt(252):\n                individual_reasoning.append(f\"Below-average risk ({ticker_vol:.1%} volatility)\")"
+},
+"rlparams": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "RLTrader.simulate_trading() \u2014 policies",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "strategy_params = {\n    'conservative': {\n        'rsi_buy_threshold': 25, 'rsi_sell_threshold': 75,\n        'momentum_threshold': 0.015, 'position_size': 0.3,\n        'stop_loss': 0.05, 'take_profit': 0.08, 'hold_period': 10\n    },\n    'moderate': {\n        'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70,\n        'momentum_threshold': 0.01, 'position_size': 0.5,\n        'stop_loss': 0.08, 'take_profit': 0.12, 'hold_period': 7\n    },\n    'aggressive': {\n        'rsi_buy_threshold': 35, 'rsi_sell_threshold': 65,\n        'momentum_threshold': 0.005, 'position_size': 0.8,\n        'stop_loss': 0.12, 'take_profit': 0.20, 'hold_period': 5\n    }\n}"
+},
+"rllogic": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "RLTrader.simulate_trading() \u2014 decisions",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Buy conditions\nbuy_conditions = []\nif rsi < params['rsi_buy_threshold']:\n    buy_conditions.append(f\"RSI oversold ({rsi:.1f})\")\nif momentum > params['momentum_threshold']:\n    buy_conditions.append(f\"Positive momentum ({momentum:.3f})\")\nif macd > 0:\n    buy_conditions.append(\"MACD bullish\")\nif volume_ratio > 1.2:\n    buy_conditions.append(f\"High volume ({volume_ratio:.1f}x)\")\n\n# Sell conditions\nsell_conditions = []\nif rsi > params['rsi_sell_threshold']:\n    sell_conditions.append(f\"RSI overbought ({rsi:.1f})\")\nif momentum < -params['momentum_threshold']:\n    sell_conditions.append(f\"Negative momentum ({momentum:.3f})\")\nif macd < 0:\n    sell_conditions.append(\"MACD bearish\")\n\n# Trading decisions\nif current_position <= 0 and len(buy_conditions) >= 2 and hold_counter == 0:\n    action = 1  # Buy\n    current_position = params['position_size']\n    entry_price = price\n    entry_date = current_date\n    hold_counter = params['hold_period']\n    reason = f\"BUY - {', '.join(buy_conditions[:2])}\"\n    confidence = min(0.95, 0.5 + len(buy_conditions) * 0.15)\n\nelif current_position > 0:\n    # Check exit conditions\n    price_change = (price - entry_price) / entry_price\n\n    # Take profit\n    if price_change >= params['take_profit']:\n        action = -1  # Sell\n        pnl_trades.append(price_change)\n        current_position = 0\n        reason = f\"SELL - Take profit ({price_change:.2%})\"\n        confidence = 0.9\n\n    # Stop loss\n    elif price_change <= -params['stop_loss']:\n        action = -1  # Sell\n        pnl_trades.append(price_change)\n        current_position = 0\n        reason = f\"SELL - Stop loss ({price_change:.2%})\"\n        confidence = 0.8\n\n    # Technical sell signals\n    elif len(sell_conditions) >= 2:\n        action = -1  # Sell\n        pnl_trades.append(price_change)\n        current_position = 0\n        reason = f\"SELL - {', '.join(sell_conditions[:2])}\"\n        confidence = min(0.9, 0.5 + len(sell_conditions) * 0.1)"
+},
+"scen": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "StressTester.run_stress_tests() \u2014 scenarios",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "    self.stress_scenarios = {}\n    self.stress_results = {}\n\ndef run_stress_tests(self, data, portfolio_weights):\n    \"\"\"Run comprehensive stress tests with detailed explanations.\"\"\"\n    try:\n        print(\"\ud83e\uddea Running comprehensive stress testing...\")\n\n        stress_results = {}\n\n        # Enhanced stress scenarios with realistic parameters\n        scenarios = {\n            'market_crash': {\n                'name': 'Market Crash (-20%)',\n                'return_shock': -0.20,\n                'vol_multiplier': 2.5,\n                'description': 'Severe market downturn similar to COVID-19 or 2008 crisis'\n            },\n            'volatility_spike': {\n                'name': 'Volatility Spike (3x)',\n                'return_shock': -0.02,  # Small negative return\n                'vol_multiplier': 3.0,\n                'description': 'Extreme market uncertainty with high volatility but minimal price change'\n            },\n            'mild_correction': {\n                'name': 'Mild Correction (-10%)',\n                'return_shock': -0.10,\n                'vol_multiplier': 1.5,\n                'description': 'Standard market correction, healthy pullback'\n            },\n            'bull_rally': {\n                'name': 'Bull Rally (+15%)',\n                'return_shock': 0.15,\n                'vol_multiplier': 0.8,\n                'description': 'Strong bull market with reduced volatility'\n            },\n            'stagflation': {\n                'name': 'Stagflation Scenario',\n                'return_shock': -0.05,\n                'vol_multiplier': 2.0,\n                'description': 'High inflation with stagnant growth'\n            }\n        }"
+},
+"stress": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "StressTester.run_stress_tests() \u2014 maths",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Apply stress scenario\nbase_return = returns.mean()\nbase_vol = returns.std()\n\n# Stressed metrics\nstressed_return = (base_return + scenario_params['return_shock'] / 252) * 252\nstressed_vol = base_vol * scenario_params['vol_multiplier'] * np.sqrt(252)\nstressed_sharpe = stressed_return / stressed_vol if stressed_vol > 0 else 0\n\n# Value at Risk calculation (95% confidence)\nstressed_daily_returns = returns + scenario_params['return_shock'] / 252\nvar_95 = np.percentile(stressed_daily_returns, 5) * np.sqrt(252)"
+},
+"impact": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "StressTester._assess_scenario_impact()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "def _assess_scenario_impact(self, portfolio_return, portfolio_vol, portfolio_var):\n    \"\"\"Assess the severity of scenario impact.\"\"\"\n    try:\n        if portfolio_return < -0.15:\n            return \"Severe\"\n        elif portfolio_return < -0.08:\n            return \"Moderate\"\n        elif portfolio_return < -0.03:\n            return \"Mild\"\n        elif portfolio_return > 0.08:\n            return \"Very Positive\"\n        else:\n            return \"Neutral\"\n    except:\n        return \"Unknown\""
+},
+"advice": {
+"file": "Professional_Stockbroker_Assistant.ipynb",
+"title": "BrokerAdvisor.generate_advice()",
+"lang": "python",
+"url": "https://github.com/deadven7/stockbroker-assistant/blob/HEAD/Professional_Stockbroker_Assistant.ipynb",
+"code": "# Final recommendation logic based on signal scores\ntotal_signals = sum(signal_scores.values())\nif total_signals > 0:\n    bullish_ratio = signal_scores['bullish'] / total_signals\n    bearish_ratio = signal_scores['bearish'] / total_signals\n\n    if bullish_ratio > 0.6 and advice['confidence'] > 0.6:\n        advice['recommendation'] = 'BUY'\n    elif bearish_ratio > 0.6 and advice['confidence'] > 0.6:\n        advice['recommendation'] = 'SELL'\n    elif bullish_ratio > 0.4:\n        advice['recommendation'] = 'HOLD/BUY'\n    elif bearish_ratio > 0.4:\n        advice['recommendation'] = 'HOLD/SELL'\n    else:\n        advice['recommendation'] = 'HOLD'"
+}
+},
+"optimizers": {
+"net": {
+"file": "comparison.py",
+"title": "class Net (LeNet-5 style)",
+"lang": "python",
+"url": "https://github.com/deadven7/optimizer-role-nn/blob/HEAD/comparison.py",
+"code": "class Net(nn.Module):\n    def __init__(self):\n        super(Net, self).__init__()\n        self.conv1 = nn.Conv2d(1, 20, 5, 1)\n        self.conv2 = nn.Conv2d(20, 50, 5, 1)\n        self.fc1 = nn.Linear(4*4*50, 500)\n        self.fc2 = nn.Linear(500, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2, 2)\n        x = F.relu(self.conv2(x))\n        x = F.max_pool2d(x, 2, 2)\n        x = x.view(-1, 4*4*50)\n        x = F.relu(self.fc1(x))\n        x = self.fc2(x)\n        return F.log_softmax(x, dim=1)"
+},
+"opts": {
+"file": "comparison.py",
+"title": "main() \u2014 the three optimizers",
+"lang": "python",
+"url": "https://github.com/deadven7/optimizer-role-nn/blob/HEAD/comparison.py",
+"code": "optimizers = [optim.SGD(model.parameters(), lr=args.lr, momentum=0.5),\n              optim.Adagrad(model.parameters(), lr=args.lr),\n              optim.RMSprop(model.parameters(), lr=args.lr, momentum=0)]"
+},
+"train": {
+"file": "sgd_class.py",
+"title": "SGD_TrainTest.train()",
+"lang": "python",
+"url": "https://github.com/deadven7/optimizer-role-nn/blob/HEAD/sgd_class.py",
+"code": "def train(self, epoch):\n    self.model.train()\n    train_loss = 0\n    for batch_idx, (data, target) in enumerate(self.train_loader):\n        self.optimizer.zero_grad()\n        output = self.model(data)\n        loss = F.nll_loss(output, target)\n        loss.backward()\n        self.optimizer.step()\n        train_loss += loss.item()\n        pred = output.argmax(dim=1, keepdim=True)\n        correct = pred.eq(target.view_as(pred)).sum().item()\n        accuracy = 100. * correct / len(data)\n        self.train_acc.append(accuracy)\n        if batch_idx % self.log_interval == 0:\n            print('Epoch Set: {} [{}/{} ({:.0f}%)]\\tLoss: {:.6f}'.format(\n                epoch, batch_idx *\n                len(data), len(self.train_loader.dataset),\n                100. * batch_idx / len(self.train_loader), loss.item()))\n    train_loss /= len(self.train_loader.dataset)\n    return train_loss"
+},
+"ada": {
+"file": "adagrad_class.py",
+"title": "ADA_TrainTest.__init__()",
+"lang": "python",
+"url": "https://github.com/deadven7/optimizer-role-nn/blob/HEAD/adagrad_class.py",
+"code": "    def __init__(self):\n        super(Net, self).__init__()\n        self.conv1 = nn.Conv2d(1, 20, 5, 1)\n        self.dropout = nn.Dropout(0.5)\n        self.conv2 = nn.Conv2d(20, 50, 5, 1)\n        self.bn = nn.BatchNorm2d()\n        self.fc1 = nn.Linear(4*4*50, 500)\n        self.fc2 = nn.Linear(500, 10)\n\n    def forward(self, x):\n        x = F.relu(self.conv1(x))\n        x = F.max_pool2d(x, 2, 2)\n        x = F.relu(self.conv2(x))\n        x = F.max_pool2d(x, 2, 2)\n        x = x.view(-1, 4*4*50)\n        x = F.relu(self.fc1(x))\n        x = self.fc2(x)\n        return F.log_softmax(x, dim=1)\n\n\nclass ADA_TrainTest:\n    def __init__(self, batch_size=64, test_batch_size=1000, epochs=10, lr=0.01, seed=1, log_interval=10, save_model=False, ratio=0.5):\n        self.batch_size = batch_size\n        self.test_batch_size = test_batch_size\n        self.epochs = epochs\n        self.lr = lr\n        self.seed = seed\n        self.log_interval = log_interval\n        self.save_model = save_model\n        self.ratio = ratio\n        self.train_loader, self.test_loader = self._prepare_data_loaders()\n        self.model = Net()\n        self.optimizer = optim.Adagrad(self.model.parameters(), lr=self.lr)"
+}
+},
+"recommender": {
+"combine": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "Combining clustering attributes",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "full_data['Clustering Attributes'] = (full_data['Attribute 3'] + ' ' + full_data['Attribute 4'] + ' ' + \n                                  full_data['Attribute 7'] + ' ' + full_data['Attribute 8'])"
+},
+"clean": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "Removing stopwords & punctuation",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "def stopwords(text):\n    text = [word.lower() for word in text.split() if word.lower() not in sw]\n    return \" \".join(text)\n\ndef remove_punctuation(text):\n    translator = str.maketrans('', '', string.punctuation)\n    return text.translate(translator)"
+},
+"cv": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "CountVectorizer + cosine recommender",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "CV = CountVectorizer()\nconverted_matrix = CV.fit_transform(recommender_data['Clustering Attributes'])\n# Cosine similarity\ncosine_similarity = cosine_similarity(converted_matrix)\n\ndef recommendation(title, cosine_sim = cosine_similarity):\n    try:\n        # Comparing titles and searching for similar values\n        recommend_content = []   \n        idx = indices[indices == title].index[0]\n        series = pd.Series(cosine_sim[idx]).sort_values(ascending = False)\n        top10 = list(series.iloc[1:11].index)\n        \n        # List with the titles of the best 10 matching universities\n        for i in top10:\n            recommend_content.append(list(recommender_data.index)[i])\n        print(\"If you searched '\" + title + \"', here are some other options:\\n\")\n        return recommend_content\n\n    except:\n        return 'Invalid Entry'\n# Recommendations for 'Stranger Things'"
+},
+"tfidf": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "TF-IDF vectorisation",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "def identity_tokenizer(text):\n    return text\n\n# Vectorizing the data\ntfidf = TfidfVectorizer(tokenizer = identity_tokenizer, stop_words='english', lowercase=False, max_features = 10000)    \nX = tfidf.fit_transform(clustering_data)\n# Shape of X"
+},
+"kmeans": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "Elbow method + K-Means (k = 5)",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "# Elbow method to find the optimal value of clusters\nwcss=[]\n\nfor i in range(1, 21):\n    kmeans = KMeans(n_clusters=i, init='k-means++', random_state=42)\n    kmeans.fit(Xpca)\n    wcss_iter = kmeans.inertia_\n    wcss.append(wcss_iter)\n\nnumber_clusters = range(1, 21)\n\u2026\nkmeans = KMeans(n_clusters=5, init='k-means++', random_state=42)\nkmeans.fit(Xpca)"
+},
+"graph": {
+"file": "Data Mining Final Project - Netflix Data FInal.ipynb",
+"title": "NetworkX similarity graph",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20Netflix%20Data%20FInal.ipynb",
+"code": "for i, row in full_data.iterrows():\n    DAG.add_node(row['Attribute 2'], label=\"Title\", mtype=row['Attribute 1'], rating=row['Attribute 5'])\n    \n    DAG.add_nodes_from([(ele, {\"label\": \"Actor\"}) for ele in row['Actor']])\n    DAG.add_edges_from([(row['Attribute 2'], ele, {\"label\": \"Actor\"}) for ele in row['Actor']])\n    DAG.add_edges_from([(ele, row['Attribute 2'], {\"label\": \"Actor\"}) for ele in row['Actor']])\n    \n    DAG.add_nodes_from([(ele, {\"label\": \"Genre\"}) for ele in row['Genre']])\n    DAG.add_edges_from([(row['Attribute 2'], ele, {\"label\": \"Genre\"}) for ele in row['Genre']])\n    DAG.add_edges_from([(ele, row['Attribute 2'], {\"label\": \"Genre\"}) for ele in row['Genre']])\n    \n    DAG.add_nodes_from([(ele, {\"label\": \"Director\"}) for ele in row['Director']])\n    DAG.add_edges_from([(row['Attribute 2'], ele, {\"label\": \"Director\"}) for ele in row['Director']])\n    DAG.add_edges_from([(ele, row['Attribute 2'], {\"label\": \"Director\"}) for ele in row['Director']])\n    \n    indices = similarity(X, i, n=5)\n    sim_node = \"Similar_Title(\" + row['Attribute 2'].strip() + \")\"\n    DAG.add_node(sim_node, label=\"Similar\")\n    DAG.add_edge(row['Attribute 2'], sim_node, label=\"Similarity\")\n    \n    DAG.add_edges_from([(sim_node, full_data['Attribute 2'].loc[ele], {\"label\": \"Similarity\"}) for ele in indices])"
+},
+"ratios": {
+"file": "Data Mining Final Project - College Data Final.ipynb",
+"title": "College feature engineering",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20College%20Data%20Final.ipynb",
+"code": "# Column 1 - ratio of total acceptances to aggregate fees\nratio_1 = data[\"Attribute 1\"] / data[\"Attribute 8\"]\n\n# Column 2 - ratio of total acceptances to total applications\nratio_2 = data[\"Attribute 2\"] / data[\"Attribute 1\"]\n\n# Column 3 - ratio of top_10_percentile to total acceptances\nratio_3 = data[\"Attribute 5\"] / data[\"Attribute 2\"]\n\n# Column 4 - ratio of student_faculty ratio to graduation rate\nratio_4 = data[\"Attribute 7\"] / data[\"Attribute 6\"]\n\n# Column 5 - ratio of graduation rate to aggregate fees\nratio_5 = data[\"Attribute 6\"] / data[\"Attribute 8\"]"
+},
+"ckm": {
+"file": "Data Mining Final Project - College Data Final.ipynb",
+"title": "Scaling + K-Means (k = 4)",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20College%20Data%20Final.ipynb",
+"code": "scaler = StandardScaler()\nclustering_data[columns_data] = scaler.fit_transform(clustering_data[columns_data])\n\nkmeans = KMeans(n_clusters=4, init='k-means++', random_state=42)\nkmeans.fit(clustering_data.drop(\"Attribute 4\", axis=1))"
+},
+"chc": {
+"file": "Data Mining Final Project - College Data Final.ipynb",
+"title": "Agglomerative (Ward, 7 clusters)",
+"lang": "python",
+"url": "https://github.com/deadven7/generic-clustering-system/blob/HEAD/Data%20Mining%20Final%20Project%20-%20College%20Data%20Final.ipynb",
+"code": "hierarchical = AgglomerativeClustering(n_clusters=7, affinity='euclidean', linkage='ward')  \nhierarchical.fit_predict(clustering_data.drop([\"Attribute 3\", \"Attribute 4\"], axis=1))"
+}
+},
+"snp500": {
+"ts": {
+"file": "PFizer_Analysis.Rmd",
+"title": "Time series + ADF test",
+"lang": "r",
+"url": "https://github.com/deadven7/snp500-analysis-forecasting/blob/HEAD/PFizer_Analysis.Rmd",
+"code": "PFizer_time <-ts(PFizer$Close,start=min(PFizer$Date),end=max(PFizer$Date),frequency = 1)\nadf.test(PFizer_time)"
+},
+"arima": {
+"file": "PFizer_Analysis.Rmd",
+"title": "auto.arima \u2192 forecast \u2192 Ljung\u2013Box",
+"lang": "r",
+"url": "https://github.com/deadven7/snp500-analysis-forecasting/blob/HEAD/PFizer_Analysis.Rmd",
+"code": "fit_arima<-auto.arima(PFizer_time,ic=\"aic\",trace = TRUE)\nfcst<-forecast(fit_arima,level=c(95),h=5)\nBox.test(fcst$resid,lag=5,type=\"Ljung-Box\")"
+},
+"logdiff": {
+"file": "PFizer_Analysis.Rmd",
+"title": "Log-differenced returns",
+"lang": "r",
+"url": "https://github.com/deadven7/snp500-analysis-forecasting/blob/HEAD/PFizer_Analysis.Rmd",
+"code": "plot(10*diff(log(PFizer[,6])),xlab=\"year\",ylab=\"Close\",type=\"l\",lwd=2,col=\"orange\")"
+},
+"monthly": {
+"file": "PFizer_Analysis.Rmd",
+"title": "Monthly totals by year",
+"lang": "r",
+"url": "https://github.com/deadven7/snp500-analysis-forecasting/blob/HEAD/PFizer_Analysis.Rmd",
+"code": "PFizer_month <- PFizer %>%\n  group_by(month, year) %>%\n  summarise(max_Close = sum(Close))"
+},
+"sector": {
+"file": "Sector Analysis.Rmd",
+"title": "Sector preprocessing (health care)",
+"lang": "r",
+"url": "https://github.com/deadven7/snp500-analysis-forecasting/blob/HEAD/Sector%20Analysis.Rmd",
+"code": "health_care$Date <- as.POSIXct( health_care$Date, format=\"%Y-%m-%d\" )\nhealth_care <- health_care %>% mutate(month=month(Date))\nhealth_care <- health_care %>% mutate(year=year(Date))\nhealth_care_month <- health_care %>% group_by(month, year) %>% summarise(max_mean_close = sum(mean_close))"
+}
+},
+"attrition": {
+"label": {
+"file": "Stat Modeling - Final project.Rmd",
+"title": "Encoding the label",
+"lang": "r",
+"url": "https://github.com/deadven7/credit-approval-prediction/blob/HEAD/Stat%20Modeling%20-%20Final%20project.Rmd",
+"code": "cdata$Attrition_Flag= ifelse(cdata$Attrition_Flag ==\"Attrited Customer\", \"1\", \"0\")\ncdata$Attrition_Flag = as.factor(cdata$Attrition_Flag)\ncolnames(cdata)[2] <- 'label'"
+},
+"glm": {
+"file": "Stat Modeling - Final project.Rmd",
+"title": "Logistic regression (glm) with 0.2 threshold",
+"lang": "r",
+"url": "https://github.com/deadven7/credit-approval-prediction/blob/HEAD/Stat%20Modeling%20-%20Final%20project.Rmd",
+"code": "data1 = cdata %>% select(-c(Months_on_book,Total_Trans_Amt, Total_Amt_Chng_Q4_Q1, Avg_Utilization_Ratio, Avg_Open_To_Buy))\ntrainIndex <- createDataPartition(data1$label, p = .75,list=FALSE)\ntraining <- data1[trainIndex,]\ntesting <- data1[-trainIndex,]\nmodel <- glm(label~.,data = training,family = 'binomial')\nsummary(model)\nprob=predict(model,testing,type=\"response\")\nprob1=rep(0,2531)\nprob1[prob>0.2]=1\ncmlr = confusionMatrix(as.factor(prob1), testing$label, positive=\"1\")\ncmlr"
+},
+"ridge": {
+"file": "Stat Modeling - Final project.Rmd",
+"title": "Ridge (cv.glmnet, \u03b1 = 0)",
+"lang": "r",
+"url": "https://github.com/deadven7/credit-approval-prediction/blob/HEAD/Stat%20Modeling%20-%20Final%20project.Rmd",
+"code": "set.seed(123)\ntrain_index <- sample(nrow(data), size = 0.7 * nrow(data))\ntrain_data <- data[train_index, ]\ntest_data <- data[-train_index, ]\n\n# Extract the predictor variables and response variable from the training data\nx_train <- train_data[, -c(1, 2, 4, 6, 7, 8, 9, 22, 23)]\ny_train <- as.numeric(train_data$Attrition_Flag == \"Attrited Customer\")\n\nx_train <- as.matrix(x_train)\n# Fit a ridge regression model using cross-validation to select the lambda parameter\ncv_ridge <- cv.glmnet(x_train, y_train, alpha = 0, nfolds = 10, family = \"binomial\")\nlambda_ridge <- cv_ridge$lambda.min\nridge_model <- glmnet(x_train, y_train, alpha = 0, lambda = lambda_ridge, family = \"binomial\")\n\n# Extract the predictor variables and response variable from the testing data\nx_test <- test_data[, -c(1, 2, 4, 6, 7, 8, 9, 22, 23)]\ny_test <- as.numeric(test_data$Attrition_Flag == \"Attrited Customer\")\n\nx_test <- as.matrix(x_test)\n\n# Predict the response variable using the ridge model and calculate the accuracy\nridge_pred <- predict(ridge_model, newx = x_test, type = \"response\")\nridge_acc <- mean(round(ridge_pred) == y_test)"
+},
+"lasso": {
+"file": "Stat Modeling - Final project.Rmd",
+"title": "Lasso (cv.glmnet, \u03b1 = 1)",
+"lang": "r",
+"url": "https://github.com/deadven7/credit-approval-prediction/blob/HEAD/Stat%20Modeling%20-%20Final%20project.Rmd",
+"code": "# Fit a lasso regression model using cross-validation to select the lambda parameter\ncv_lasso <- cv.glmnet(x_train, y_train, alpha = 1, nfolds = 10, family = \"binomial\")\nlambda_lasso <- cv_lasso$lambda.min\nlasso_model <- glmnet(x_train, y_train, alpha = 1, lambda = lambda_lasso, family = \"binomial\")\n\n# Predict the response variable using the lasso model and calculate the accuracy\nlasso_pred <- predict(lasso_model, newx = x_test, type = \"response\")\nlasso_acc <- mean(round(lasso_pred) == y_test)"
+}
+},
+"ghigliottina": {
+"w2v": {
+"file": "Team16_baseline.ipynb",
+"title": "Skip-gram Word2Vec",
+"lang": "python",
+"url": "https://github.com/deadven7/la_ghigliottina/blob/HEAD/Team16_baseline.ipynb",
+"code": "def tokenizer(sentence):\n    sentence = sentence.replace('_', ' ')\n    return word_tokenize(sentence)\n\ntokenized_data_target = [tokenizer(str(sentence)) for sentence in data['Target']]\ntokenized_data_clues = [tokenizer(str(sentence)) for sentence in data['Clues']]\ntokenized_data_combined = tokenized_data_target + tokenized_data_clues\n\nw2v_model = Word2Vec(sentences=tokenized_data_combined, vector_size=100, window=5, min_count=1, sg=1, workers=4)"
+},
+"common": {
+"file": "Team16_baseline.ipynb",
+"title": "common_words() \u2014 the solver",
+"lang": "python",
+"url": "https://github.com/deadven7/la_ghigliottina/blob/HEAD/Team16_baseline.ipynb",
+"code": "def common_words(words, top_n=10):\n    similar_words = []\n    similar_score = []\n    for word in words:\n        try:\n            if word in w2v_model.wv:\n                similar_words += [similar_word for similar_word, _ in w2v_model.wv.most_similar(word, topn=top_n)]\n                similar_score += [similar_score for _, similar_score in w2v_model.wv.most_similar(word, topn=top_n)]\n        except KeyError:\n            pass\n\n    data = pd.DataFrame({'Similar_Words': similar_words, 'Similar_Scores': similar_score})\n    ranked_data = data.groupby(\"Similar_Words\")[\"Similar_Scores\"].mean()\n    ranked_data = ranked_data.sort_values(ascending=False)\n\n    return ranked_data"
+},
+"lstm": {
+"file": "statistical-software-team-16-nn.ipynb",
+"title": "LSTM over Word2Vec embeddings",
+"lang": "python",
+"url": "https://github.com/deadven7/la_ghigliottina/blob/HEAD/statistical-software-team-16-nn.ipynb",
+"code": "model = Sequential()\nmodel.add(Embedding(input_dim=len(word_to_index) + 1, output_dim=w2v_model.vector_size, input_length=input_indices_padded_train.shape[1], trainable=False, weights=[embedding_matrix]))\nmodel.add(LSTM(64, return_sequences=True, kernel_regularizer=l2(0.01)))\nmodel.add(Dropout(0.5)) \nmodel.add(Dense(len(word_to_index) + 1, activation='softmax'))\n\nmodel.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])\n\nhistory = model.fit(\n    input_indices_padded_train, output_indices_padded_train,\n    validation_data=(input_indices_padded_test, output_indices_padded_test),\n    epochs=3)"
+},
+"bart": {
+"file": "Team16_BART.ipynb",
+"title": "Fine-tuning BART",
+"lang": "python",
+"url": "https://github.com/deadven7/la_ghigliottina/blob/HEAD/Team16_BART.ipynb",
+"code": "model_id = 'facebook/bart-base'\ntokenizer = AutoTokenizer.from_pretrained(model_id)\n\nmetric = load_metric(\"rouge\")\n\nargs = Seq2SeqTrainingArguments('text-gen-bart',\n                                num_train_epochs = 3, evaluation_strategy = \"epoch\",\n                                logging_steps = 100, learning_rate = 2e-5, weight_decay = 0.01,\n                                per_device_train_batch_size = 10, per_device_eval_batch_size = 10,\n                                save_total_limit = 3, predict_with_generate = True, fp16 = True)"
+}
+},
+"privacy": {
+"noise": {
+"file": "face_recognition_DPHE.ipynb",
+"title": "add_noise_to_data()",
+"lang": "python",
+"url": "https://github.com/deadven7/privacy-image-recognition/blob/HEAD/face_recognition_DPHE.ipynb",
+"code": "def add_noise_to_data(data, noise_factor=0.3):\n    noise = noise_factor * np.random.normal(loc=0.0, scale=1.0, size=data.shape)\n    noisy_data = data + noise\n    noisy_data = np.clip(noisy_data, 0.0, 1.0)\n    return noisy_data"
+},
+"dpsgd": {
+"file": "face_recognition_DPHE.ipynb",
+"title": "DP-SGD with TensorFlow Privacy",
+"lang": "python",
+"url": "https://github.com/deadven7/privacy-image-recognition/blob/HEAD/face_recognition_DPHE.ipynb",
+"code": "l2_norm_clip = 1.0\nnoise_multiplier = 0.8\nbatch_size = 64\nnum_microbatches = 1\nlearning_rate = 0.01\noptimizer = DPKerasAdamOptimizer(\n    l2_norm_clip=l2_norm_clip,\n    noise_multiplier=noise_multiplier,\n    num_microbatches=num_microbatches,\n    learning_rate=learning_rate\n)\n\nmodel = Sequential([\n    Flatten(input_shape=(X_train.shape[1],)),\n    Dense(512, activation='relu'),\n    Dropout(0.5),\n    Dense(256, activation='relu'),\n    Dropout(0.5),\n    Dense(len(faces.target_names), activation='softmax')\n])\n\nmodel.compile(optimizer=optimizer, loss='sparse_categorical_crossentropy', metrics=['accuracy'])"
+},
+"ckks": {
+"file": "face_recognition_DPHE.ipynb",
+"title": "CKKS context + encrypted vectors (TenSEAL)",
+"lang": "python",
+"url": "https://github.com/deadven7/privacy-image-recognition/blob/HEAD/face_recognition_DPHE.ipynb",
+"code": "context = ts.context(\n    ts.SCHEME_TYPE.CKKS,\n    poly_modulus_degree=16384,\n    coeff_mod_bit_sizes=[60, 40, 40, 60]\n)\ncontext.generate_galois_keys()\ncontext.global_scale = 2**40\nsecret_context = context.serialize(save_secret_key=True)\npublic_context = context.serialize()\n\nenc_X_train = [ts.ckks_vector(context, row.tolist()) for row in X_train]\nenc_X_test = [ts.ckks_vector(context, row.tolist()) for row in X_test]"
+},
+"resnet": {
+"file": "face_recognition.ipynb",
+"title": "ResNet50 baseline (no encryption)",
+"lang": "python",
+"url": "https://github.com/deadven7/privacy-image-recognition/blob/HEAD/face_recognition.ipynb",
+"code": "base_model = ResNet50(weights='imagenet', include_top=False)\nbase_model.trainable = False\n\nmodel = Sequential()\nmodel.add(Resizing(224, 224))\nmodel.add(base_model)\nmodel.add(Flatten())\nmodel.add(Dense(1024, activation='relu'))\nmodel.add(Dense(class_count, activation='softmax'))\nmodel.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])\n\nhist = model.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=10, epochs=10)"
+},
+"hepca": {
+"file": "face_recognition.ipynb",
+"title": "PCA \u2192 CKKS vectors",
+"lang": "python",
+"url": "https://github.com/deadven7/privacy-image-recognition/blob/HEAD/face_recognition.ipynb",
+"code": "pca = PCA(n_components=100)\nX_train_pca = pca.fit_transform(X_train_flat)\nX_test_pca = pca.transform(X_test_flat)\nenc_X_train = [ts.ckks_vector(context, row.tolist()) for row in X_train_pca]\nenc_X_test = [ts.ckks_vector(context, row.tolist()) for row in X_test_pca]"
+}
+}
+}
