@@ -4,126 +4,167 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About — Amaan Vora</title>
-  <meta name="description" content="Who is Amaan Vora? Data scientist, chess player, guitarist, comic-book reader.">
+  <meta name="description" content="Who I am: Amaan Vora, data scientist. Chess, art, writing, music, olympiads, Model UN and more.">
   <link rel="icon" href="assets/img/av-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@500;600;700&family=Bangers&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="about" class="about">
-  <div class="crt" id="crt"><div class="beam"></div></div>
 
-  <header class="ab-hero" id="abHero">
-    <canvas id="nebula" aria-hidden="true"></canvas>
-    <div class="scanlines" style="position:absolute"></div>
-    <div class="atari-meta" id="atariMeta"><span>1UP <b>000000</b></span><span>HI-SCORE <b>999999</b></span><span>CREDIT <b>01</b></span></div>
-    <div class="inner">
-      <h1 class="atari" id="atari">WHO<br>AM I?</h1>
-      <div class="atari-sub" id="atariSub">▼ PRESS START ▼</div>
+  <!-- ===== opening titles ===== -->
+  <header class="mv-hero" id="mvHero">
+    <canvas id="reel" aria-hidden="true"></canvas>
+    <div class="mv-grain" aria-hidden="true"></div>
+    <div class="mv-shade" id="mvShade" aria-hidden="true"></div>
+    <div class="mv-titles">
+      <p class="mv-presents" id="mvPresents">Amaan Vora <i>presents</i></p>
+      <h1 class="mv-title" id="mvTitle"><span>Who</span> <span>I</span> <span>Am</span></h1>
+      <p class="mv-tag" id="mvTag">a data scientist in eight scenes</p>
     </div>
+    <button class="mv-skip" id="mvSkip" type="button"><span>skip the opening</span><b aria-hidden="true">▸▸</b></button>
+    <div class="mv-cue" id="mvCue" aria-hidden="true"><span>scroll</span><i></i></div>
   </header>
 
-  <!-- 1. technology -->
-  <section class="chapter" data-fx="tech">
-    <canvas></canvas>
+  <!-- 1 · about me — data -->
+  <section class="scene" data-fx="data">
+    <canvas aria-hidden="true"></canvas>
     <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 01</b> about me</p>
       <img class="portrait" src="assets/img/amaan.jpg" alt="Amaan Vora">
-      <h2><small>LEVEL 1 · PLAYER ONE</small>Hi, I’m Amaan.</h2>
-      <p>I’m a data scientist with a statistician’s suspicion of easy answers and an engineer’s need to ship. I studied Computer Science at SRM in Chennai, then Statistics (Data Science) at Rutgers in New Jersey.</p>
-      <p>I like problems that come with a story — the messier the data, the better the plot. My favourite part of the job is the moment a model stops being a black box and starts explaining itself.</p>
+      <h2>Hi, I am Amaan Vora.</h2>
+      <p class="lead">I earned my Master's in Statistics (Data Science) at Rutgers University and am pursuing a career in Data Science. I enjoy solving puzzles and problem statements.</p>
+      <p>My first interactions with a computer began at the age of 2. I would spend the bulk of my days understanding Windows and games like Uno. Fascinated by the world of 1s and 0s, I opted for a Computer Programming course in school, where, at the age of 13, I was introduced to Java. My interest towards computers was cemented through my participation in various competitive computer challenges, where I developed programs, rudimentary gaming software and sporadically indulged in robotics.</p>
+      <p>Through a Computer Science education for my Bachelor’s, I was inundated with information that pointed to computers being the future. I spent several hours independently researching, and trying projects in multiple fields. Struggling with the grips of the pandemic, it was in 2020 when I turned my sights to Data Science. The field felt tailor-made for my abilities, and as time goes by, this belief grows stronger.</p>
+      <p>I gained my first work experience developing websites for my father’s pharmaceutical export company. As a sole developer, I had to navigate through the exhaustive pharmaceutical products and packaging solutions offered by the company. These projects inspired me to develop this portfolio website, to highlight my projects, research and certifications.</p>
+      <p>Over the years, I have increasingly pursued projects on community sites like Kaggle that offer me the opportunity to view a diverse range of problem statements. Each problem has a story of its own, and I find unravelling such stories an enthralling experience.</p>
     </div></div>
   </section>
 
-  <!-- 2. data -->
-  <section class="chapter right" data-fx="data">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 2 · ORIGIN STORY</small>Ones and zeros, since age two.</h2>
-      <p>My first computer sessions were spent figuring out Windows and losing at Uno. At thirteen I picked a programming elective at school and met Java; competitive computing challenges, rudimentary games and the odd robotics project followed.</p>
-      <p>My first real work was building websites for my father’s pharmaceutical export business as a one-person team. Then, in the middle of the pandemic in 2020, I turned to data science — and it felt tailor-made. It still does.</p>
-      <div class="facts">
-        <div class="fact"><b>7 golds</b><span>Cyber, Science, Maths, English & NASA Space Olympiads, 2010–15</span></div>
-        <div class="fact"><b>1st place</b><span>Inter-collegiate nationwide quiz</span></div>
+  <!-- 2 · other interests — a comic page -->
+  <section class="scene scene-comic" data-fx="ink">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap">
+      <div class="reveal" style="max-width:620px">
+        <p class="slate"><b>SC 02</b> other interests</p>
+        <h2>Other interests</h2>
       </div>
-    </div></div>
-  </section>
-
-  <!-- 3. chess -->
-  <section class="chapter" data-fx="chess">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 3 · THE 64 SQUARES</small>Chess taught me search.</h2>
-      <p>Long before minimax was an algorithm to me, it was a feeling at the board: if I go here, they go there, and then… I played competitively growing up and finished fourth at the state level in 2012.</p>
-      <p>It’s also why I built a checkers AI as one of my first projects — teaching a machine to look ahead is the closest thing to explaining chess to a friend.</p>
-      <div class="facts"><div class="fact"><b>4th</b><span>State-level chess, 2012</span></div><div class="fact"><b>Minimax</b><span>First AI project: a checkers engine</span></div></div>
-    </div></div>
-  </section>
-
-  <!-- 4. guitar -->
-  <section class="chapter right" data-fx="guitar">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 4 · SIX STRINGS</small>Practice, patterns, repeat.</h2>
-      <p>I cleared state-level examinations in both guitar and piano. Learning an instrument is gradient descent with your hands: small corrections, thousands of iterations, and one day the chord just rings.</p>
-      <p>Try scrolling a little faster here.</p>
-    </div></div>
-  </section>
-
-  <!-- 5. tennis -->
-  <section class="chapter" data-fx="tennis">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 5 · BASELINE</small>Read the spin, not the swing.</h2>
-      <p>Tennis was my first competitive sport — I was state-level runner-up in 2010 — and I was a regular in school table-tennis tournaments, plus volleyball, football, handball and cricket whenever there was a team short a player.</p>
-      <p>Good tennis is pattern recognition under time pressure. So is good debugging.</p>
-      <div class="facts"><div class="fact"><b>Runner-up</b><span>State-level tennis, 2010</span></div><div class="fact"><b>🏓</b><span>Frequent table-tennis tournament winner</span></div></div>
-    </div></div>
-  </section>
-
-  <!-- 6. comics -->
-  <section class="chapter right" data-fx="comics">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 6 · PANELS &amp; INK</small>The page, not the screen.</h2>
-      <p>I read comic books — the printed kind. What happens in the gutter between two panels is the reader’s job, and I love a medium that trusts its audience that much.</p>
-      <p>It’s the same instinct that’s kept me painting since I was six: telling a story with what you leave out is a skill that transfers surprisingly well to dashboards.</p>
-    </div></div>
-  </section>
-
-  <!-- 7. music -->
-  <section class="chapter" data-fx="music">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 7 · SIGNAL</small>Always something playing.</h2>
-      <p>Music is the soundtrack to most of my code. Somewhere between a waveform and a spectrogram is where my two worlds meet — it’s all just signal, and the fun is in finding the structure inside it.</p>
-    </div></div>
-  </section>
-
-  <!-- 8. elsewhere -->
-  <section class="chapter right" data-fx="tech2">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>LEVEL 8 · SIDE QUESTS</small>Words, debate, languages.</h2>
-      <p>My poem <em>“A Plea”</em> won a national competition in 2011. I spent 2013–15 at Model United Nations conferences, representing Canada, Haiti and the United Kingdom on committees like DISEC and ECOSOC (two honourable mentions).</p>
-      <p class="lang">EN · HI · GU · UR · DE · ES · FR</p>
-    </div></div>
-  </section>
-
-  <!-- 9. continue -->
-  <section class="chapter" data-fx="stars" style="min-height:90vh">
-    <canvas></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <h2><small>SAVE FILE</small>Education</h2>
-      <div class="edu">
-        <div>M.S. Statistics (Data Science) — Rutgers, The State University of New Jersey <span>2022–24</span></div>
-        <div>B.Tech Computer Science &amp; Engineering — SRM Institute of Science and Technology <span>2018–22</span></div>
+      <div class="comic-page">
+        <figure class="panel p-chess" data-panel="chess"><canvas aria-hidden="true"></canvas><figcaption><b>Chess</b><span>State level, 4th place (2012)</span></figcaption></figure>
+        <figure class="panel p-art" data-panel="art"><canvas aria-hidden="true"></canvas><figcaption><b>Art</b><span>An avid painter since the age of 6</span></figcaption></figure>
+        <figure class="panel p-writing" data-panel="writing"><canvas aria-hidden="true"></canvas><figcaption><b>Writing</b><span>National winner for the poem ‘A Plea’ (2011)</span></figcaption></figure>
+        <figure class="panel p-music" data-panel="music"><canvas aria-hidden="true"></canvas><figcaption><b>Music</b><span>Guitar and piano, state-level examinations</span></figcaption></figure>
       </div>
-      <p style="margin-top:40px;font-family:var(--pixel);font-size:14px;color:var(--amber);line-height:2">CONTINUE? <span id="countdown">9</span></p>
-      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-        <a class="btn primary" href="projects.html">play the projects <span class="arr">→</span></a>
-        <a class="btn" href="index.html#work">see the work</a>
+    </div>
+  </section>
+
+  <!-- 3 · olympiads — orbits -->
+  <section class="scene right" data-fx="orbits">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 03</b> 2010 – 2015</p>
+      <h2>Olympiad Gold Medallist</h2>
+      <ul class="beats">
+        <li>Cyber, Science, Mathematics, English and NASA Space Olympiads</li>
+        <li>7 gold medals acquired over 6 years</li>
+        <li>Top ranks for all Olympiads every year</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <!-- 4 · model united nations — globe -->
+  <section class="scene" data-fx="globe">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 04</b> 2013 – 2015</p>
+      <h2>Model United Nations</h2>
+      <ul class="beats">
+        <li>Multiple MUNs attended from 2013 to 2015</li>
+        <li>Two honourable mentions as a delegate</li>
+        <li>Delegation to committees such as DISEC and ECOSOC</li>
+        <li>Countries represented include Canada, Haiti and United Kingdom</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <!-- 5 · sports — court -->
+  <section class="scene right" data-fx="court">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 05</b> on the court</p>
+      <h2>Sports and Activities</h2>
+      <ul class="beats">
+        <li>State Level Chess (2012) — 4th Place</li>
+        <li>State Level Tennis (2010) — Runner Up</li>
+        <li>Frequent winner of Table Tennis school tournaments</li>
+        <li>Frequent participant in team sports such as volleyball, football, handball and cricket</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <!-- 6 · extra-curricular — guitar -->
+  <section class="scene" data-fx="guitar">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 06</b> after school</p>
+      <h2>Extra-Curricular Activities</h2>
+      <ul class="beats">
+        <li>National Winner for poem ‘A Plea’ (2011)</li>
+        <li>1st Place — Inter-collegiate nationwide Quiz tournament</li>
+        <li>Avid painting enthusiast from an early age of 6</li>
+        <li>Cleared state-level examinations for playing Guitar and Piano</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <!-- 7 · languages — glyphs -->
+  <section class="scene right" data-fx="glyphs">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="copy reveal">
+      <p class="slate"><b>SC 07</b> in other words</p>
+      <h2>Languages</h2>
+      <p class="langs"><span>English</span><span>Hindi</span><span>Gujarati</span><span>Urdu</span><span>German</span><span>Spanish</span><span>French</span></p>
+    </div></div>
+  </section>
+
+  <!-- 8 · end credits -->
+  <section class="scene credits" data-fx="beam">
+    <canvas aria-hidden="true"></canvas>
+    <div class="wrap"><div class="roll reveal">
+      <p class="slate"><b>SC 08</b> end credits</p>
+      <h2>Education</h2>
+      <dl>
+        <dt>Rutgers, The State University of New Jersey</dt><dd>Master of Science · Statistics (Data Science) · 2022 – 2024</dd>
+        <dt>SRM Institute of Science and Technology</dt><dd>Bachelor of Technology · Computer Science and Engineering · 2018 – 2022</dd>
+      </dl>
+      <div class="roll-cta">
+        <a class="tkt" href="projects.html" aria-label="See the projects">
+          <span class="tkt-stub"><small>admit</small><b>one</b><em>№ 007</em></span>
+          <span class="tkt-main"><small>now showing</small><b>the projects</b><i>seven live labs <span class="arr">→</span></i></span>
+        </a>
+        <a class="tl-btn" href="index.html#work" aria-label="See the work timeline">
+          <span class="tl-track" aria-hidden="true"><i></i><i></i><i></i><i></i><u></u></span>
+          <span class="tl-txt"><b>the work</b><small>2020 → now</small></span>
+        </a>
       </div>
-      <div class="socials" data-socials style="margin-top:24px"></div>
+      <div class="contact-row">
+        <a class="stamp" href="mailto:amaan.vora.e@gmail.com" aria-label="Email Amaan">
+          <span class="stamp-face"><small>air mail</small><span class="stamp-ico" aria-hidden="true">✉</span><b>write to me</b></span>
+          <span class="postmark" aria-hidden="true"><span>delivered</span></span>
+        </a>
+        <a class="soc gh" href="https://github.com/deadven7" target="_blank" rel="noopener" aria-label="GitHub">
+          <span class="ico" data-icon="github"></span><span class="soc-txt"><b>GitHub</b><small>commits</small></span>
+          <span class="gh-grid" aria-hidden="true"></span>
+        </a>
+        <a class="soc li" href="https://www.linkedin.com/in/amaan-vora/" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <span class="ico" data-icon="linkedin"></span><span class="soc-txt"><b>LinkedIn</b><small>let’s connect</small></span>
+        </a>
+        <a class="soc kg" href="https://www.kaggle.com/amaanvora" target="_blank" rel="noopener" aria-label="Kaggle">
+          <span class="ico" data-icon="kaggle"></span><span class="soc-txt"><b>Kaggle</b><small>leaderboard</small></span>
+          <span class="kg-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </a>
+      </div>
+      <p class="fin">fin.</p>
     </div></div>
   </section>
 
