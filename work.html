@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Work — Amaan Vora</title>
+  <meta name="description" content="A walk past the places Amaan Vora has worked.">
+  <link rel="icon" href="assets/img/av-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="work" class="work" data-nofooter="1">
+  <div class="street-wrap" id="streetWrap"><canvas id="street" aria-hidden="true"></canvas></div>
+  <div class="street-fade" id="streetFade" aria-hidden="true"></div>
+
+  <div class="walk-title" id="walkTitle">
+    <h1>Work</h1>
+    <p><span class="mouse" aria-hidden="true"><i></i></span>scroll to walk</p>
+  </div>
+
+  <button class="buzz" id="buzz" type="button" hidden>
+    <span class="buzz-btn" aria-hidden="true"></span>
+    <span class="buzz-txt"><small>buzz</small><b id="buzzName">—</b></span>
+  </button>
+
+  <nav class="walk-map" id="walkMap" aria-label="Places on this street"></nav>
+  <button class="walk-list" id="walkList" type="button">skip the walk</button>
+
+  <div class="walk-end" id="walkEnd" hidden>
+    <p>End of the block, for now.</p>
+    <div><a class="btn primary" href="projects.html">see the projects <span class="arr">→</span></a><a class="btn" href="about.html">who I am</a></div>
+  </div>
+
+  <div class="wmodal" id="wmodal" role="dialog" aria-modal="true" aria-labelledby="wmOrg" hidden>
+    <div class="wm-card" id="wmCard"></div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/site.js"></script>
+  <script src="js/work.js"></script>
+</body>
+</html>

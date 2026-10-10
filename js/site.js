@@ -22,7 +22,7 @@
       <li><a href="${root}index.html" class="${page === 'home' ? 'active' : ''}">home</a></li>
       <li><a href="${root}about.html" class="${page === 'about' ? 'active' : ''}">about</a></li>
       <li><a href="${root}projects.html" class="${page === 'projects' ? 'active' : ''}">projects</a></li>
-      <li><a href="${root}index.html#work">work</a></li>
+      <li><a href="${root}work.html" class="${page === 'work' ? 'active' : ''}">work</a></li>
       <li><a href="${S.links.mail}">contact</a></li>
     </ul>`;
   document.body.prepend(nav);
