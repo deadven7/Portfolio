@@ -350,7 +350,7 @@ body.about { background: #040507; --cine: 'Cinzel', 'Trajan Pro', Georgia, serif
 @keyframes tvflick { 0%, 92%, 100% { opacity: .8; } 93% { opacity: .64; } 94% { opacity: .82; } 96% { opacity: .72; } }
 
 /* ---- the network stage ---- */
-.net { position: relative; height: calc(100vh + 8 * 46vh); }
+.net { position: relative; height: calc(100vh + 8 * 34vh); }
 .net-stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
 .net-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .net-face { position: absolute; left: 0; top: 0; width: 76px; height: 76px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(124,255,178,.55); box-shadow: 0 0 30px rgba(124,255,178,.25); filter: grayscale(.15); will-change: transform, opacity; z-index: 2; }
