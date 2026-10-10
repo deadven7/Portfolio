@@ -1,6 +1,6 @@
 /* La Ghigliottina — the Skip-Gram baseline's common_words() solver, running on vectors trained from the repo's data */
 DEMOS.ghigliottina = async function (root) {
-  const [VOC, PUZ, buf] = await Promise.all([loadJSON('assets/data/w2v_vocab.json'), loadJSON('assets/data/ghig_puzzles.json'), fetch('assets/data/w2v_int8.bin').then(r => r.arrayBuffer())]);
+  const [VOC, PUZ, buf] = await Promise.all([loadJSON('assets/data/w2v_vocab.json'), loadJSON('assets/data/ghig_puzzles.json'), fetch('assets/data/w2v_int8.b64.txt').then(r => r.text()).then(t => Uint8Array.from(atob(t.trim()), c => c.charCodeAt(0)).buffer)]);
   const D = 100, Q = new Int8Array(buf), NV = VOC.length, idx = new Map(VOC.map((w, i) => [w, i]));
   const vec = new Float32Array(NV * D); for (let i = 0; i < NV; i++) { let n = 0; for (let k = 0; k < D; k++) { const v = Q[i * D + k] / 127; vec[i * D + k] = v; n += v * v; } n = Math.sqrt(n); for (let k = 0; k < D; k++) vec[i * D + k] /= n; }
   function most_similar(w, topn = 10) { const i = idx.get(w); if (i == null) return []; const out = []; for (let j = 0; j < NV; j++) { if (j === i) continue; let s = 0; for (let k = 0; k < D; k++) s += vec[i * D + k] * vec[j * D + k]; if (out.length < topn || s > out[out.length - 1][1]) { out.push([VOC[j], s]); out.sort((a, b) => b[1] - a[1]); if (out.length > topn) out.pop(); } } return out; }
