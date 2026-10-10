@@ -4,92 +4,76 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>About — Amaan Vora</title>
-  <meta name="description" content="Amaan Vora — data scientist and engineer. How I work, and what I care about.">
+  <meta name="description" content="Who I am — Amaan Vora, data scientist.">
   <link rel="icon" href="assets/img/av-logo.png">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Cinzel:wght@600;700&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-page="about" class="about">
   <div class="crt" id="crt" aria-hidden="true"><div class="beam"></div></div>
+  <canvas class="glass" id="glass" aria-hidden="true"></canvas>
 
-  <!-- ===== opening: a reel seen through an old set ===== -->
+  <!-- opening: a reel, seen through an old set -->
   <header class="mv-hero" id="mvHero">
     <canvas id="reel" aria-hidden="true"></canvas>
     <div class="mv-grain" aria-hidden="true"></div>
     <div class="mv-scan" aria-hidden="true"></div>
     <div class="mv-shade" id="mvShade" aria-hidden="true"></div>
-    <div class="mv-titles">
-      <p class="mv-presents" id="mvPresents">Amaan Vora <i>presents</i></p>
-      <h1 class="mv-title" id="mvTitle"><span>Who</span> <span>I</span> <span>Am</span></h1>
-    </div>
-    <div class="mv-cue" id="mvCue" aria-hidden="true"><span>scroll</span><i></i></div>
+    <div class="mv-titles" id="mvTitles"><h1 class="mv-title" id="mvTitle">Who I Am</h1></div>
   </header>
 
-  <!-- 1 -->
-  <section class="scene" data-fx="data">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <p class="slate"><b>SC 01</b> hello</p>
-      <img class="portrait" src="assets/img/amaan.jpg" alt="Amaan Vora">
-      <h2>Hi, I’m Amaan.</h2>
-      <p class="lead">I’m a data scientist and engineer. I studied Computer Science at SRM and Statistics (Data Science) at Rutgers, and I’ve worked across machine-learning research, NLP and cloud engineering.</p>
-      <p>Computers have been around for as long as I can remember, and the curiosity never wore off. The question I bring to them has changed, though: less <em>how does this work</em>, more <em>what is this data actually saying, and how do I show it?</em></p>
-    </div></div>
-  </section>
+  <!-- the network: one pinned stage, the scroll walks through it -->
+  <section class="net" id="net" aria-label="About Amaan">
+    <div class="net-stage">
+      <canvas id="netBg" aria-hidden="true"></canvas>
+      <canvas id="netFg" aria-hidden="true"></canvas>
+      <img class="net-face" id="netFace" src="assets/img/amaan.jpg" alt="Amaan Vora">
 
-  <!-- 2 -->
-  <section class="scene right" data-fx="board">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <p class="slate"><b>SC 02</b> method</p>
-      <h2>Patient by design.</h2>
-      <p>Before I commit to a model, I want to know where it will break: what the data can and can’t support, which assumption is carrying the weight, and what the second-best explanation is.</p>
-      <p>It makes me a little slower on day one and a lot faster on day thirty. The work shows it: honest baselines, causal questions over convenient correlations, and results I can defend line by line.</p>
-    </div></div>
-  </section>
+      <div class="beat" data-k="0">
+        <p class="slug">FADE IN:</p>
+        <h2 class="hello">Hi, I’m Amaan.</h2>
+      </div>
 
-  <!-- 3 -->
-  <section class="scene" data-fx="hero">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <p class="slate"><b>SC 03</b> craft</p>
-      <h2>Built to be seen.</h2>
-      <p>Analysis nobody can follow doesn’t change anything. I put as much into the last mile (the chart, the interface, the explanation that survives a meeting) as into the model itself, because that’s where the work lands or doesn’t.</p>
-      <p>It’s why every project here comes with something you can actually play with.</p>
-    </div></div>
-  </section>
+      <div class="beat" data-k="1">
+        <p class="slug">INT. FAMILY COMPUTER — 2002</p>
+        <p class="line">He loses at Uno and wants to know how the cards were dealt.</p>
+        <p class="slug cut">CUT TO: 2013 — his first Java program deals them.</p>
+      </div>
+      <div class="beat" data-k="2">
+        <p class="slug">INT. MUSIC ROOM — 2011</p>
+        <p class="line">Six strings, eighty-eight keys, paint drying on the desk. Somewhere under it, a poem.</p>
+      </div>
+      <div class="beat" data-k="3">
+        <p class="slug">EXT. STATE TENNIS FINAL — 2010</p>
+        <p class="line">Runner-up. He replays every point on the drive home.</p>
+      </div>
+      <div class="beat" data-k="4">
+        <p class="slug">INT. STATE CHESS CHAMPIONSHIP — 2012</p>
+        <p class="line">Move thirty-one. He’s already looking at thirty-six.</p>
+        <p class="slug cut">LATER — black holes, until 2 a.m.</p>
+      </div>
 
-  <!-- 4 -->
-  <section class="scene right" data-fx="guitar">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <p class="slate"><b>SC 04</b> practice</p>
-      <h2>Reps, then polish.</h2>
-      <p>Most of what I’m good at came from repetition: small corrections, made thousands of times, until something holds. It’s the same loop as tuning a model, and I enjoy it more than I probably should.</p>
-    </div></div>
-  </section>
-
-  <!-- 5 -->
-  <section class="scene" data-fx="court">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="copy reveal">
-      <p class="slate"><b>SC 05</b> range</p>
-      <h2>Comfortable in motion.</h2>
-      <p>I’ve shipped as a team of one for a family export business, worked inside a global engineering team, and led the front end of a student newsroom’s cloud rebuild. I speak seven languages, adapt quickly, and like being handed the ambiguous part of a problem.</p>
-    </div></div>
+      <div class="beat now" data-k="5">
+        <p class="slug">INT. SIEMENS — 2021</p>
+        <p class="line">A hundred thousand customer comments. By the end of the week, they’re sorted by what people meant.</p>
+      </div>
+      <div class="beat now" data-k="6">
+        <p class="slug">INT. RUTGERS, STATISTICS — 2023</p>
+        <p class="line">A random forest has to be rebuilt in another language. It comes back fifteen percent sharper.</p>
+      </div>
+      <div class="beat now" data-k="7">
+        <p class="slug">INT. THE DAILY TARGUM — 2023</p>
+        <p class="line">The paper moves to the cloud. The bill halves. The readership doesn’t.</p>
+      </div>
+    </div>
   </section>
 
   <!-- credits -->
-  <section class="scene credits" data-fx="beam">
-    <canvas aria-hidden="true"></canvas>
-    <div class="wrap"><div class="roll reveal">
-      <p class="slate"><b>END</b> credits</p>
-      <dl>
-        <dt>Rutgers, The State University of New Jersey</dt><dd>M.S. Statistics (Data Science) · 2022 – 2024</dd>
-        <dt>SRM Institute of Science and Technology</dt><dd>B.Tech Computer Science and Engineering · 2018 – 2022</dd>
-      </dl>
-      <p class="roll-line">Got a messy problem? I’d like to hear about it.</p>
+  <section class="credits" id="credits">
+    <div class="wrap"><div class="roll">
+      <p class="tbc">To be continued…</p>
+      <p class="edu-line">M.S. Statistics (Data Science), Rutgers · B.Tech Computer Science, SRM</p>
       <div class="roll-cta">
         <a class="tkt" href="projects.html" aria-label="See the projects">
           <span class="tkt-stub"><small>admit</small><b>one</b><em>№ 007</em></span>
