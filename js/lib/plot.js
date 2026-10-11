@@ -140,6 +140,7 @@
   const snipP = loadJSON('assets/data/snippets.json');
   window.LAB = {
     highlight,
+    need(src) { return (window.__need = window.__need || {})[src] || (window.__need[src] = new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = rej; document.head.append(el); })); },
     explain(html) { return `<div class="explain">${html}</div>`; },
     // placeholder that is filled once snippets.json arrives
     src(slug, keys, note = '') {

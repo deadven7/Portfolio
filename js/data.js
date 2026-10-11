@@ -388,7 +388,7 @@ window.SITE = {
       metrics: [['Local', 'nothing leaves the machine'], ['CPU / CUDA', 'summarisation'], ['Minutes', 'per long report']],
       summary: [
         'Reports and research papers lock information in layout. I built a local pipeline that extracts text, tables, figures and metadata, segments the document into sections, tags people, organisations and places with spaCy, indexes everything for TF-IDF search, and summarises each section with BART or FLAN-T5 on CPU or GPU. A Gradio interface streams progress as it works.',
-        'The lab runs the same flow on a public-domain paper: the section map, TF-IDF search and entity tagging run live in your browser, with an extractive summary per section standing in for the transformer summaries.',
+        'The lab runs the same flow on a sample report assembled from this portfolio’s project READMEs, or on any text you paste: the section map, TF-IDF search and entity tagging run live in your browser, with extractive summaries standing in for the transformer ones.',
       ],
       pipeline: ['Extract text, tables, figures', 'Segment into sections', 'spaCy entities', 'TF-IDF index & search', 'BART / FLAN-T5 summaries', 'Gradio streaming UI'],
       demo: 'pdfintel',
@@ -403,7 +403,7 @@ window.SITE = {
       metrics: [['250K', 'papers clustered'], ['50+', 'coherent topics'], ['Best Paper', 'IRCICD 2022']],
       summary: [
         'My undergraduate thesis. Keyword search can’t tell that two papers using different words are about the same thing. I embedded 250,000 abstracts with SciBERT, discovered topics with BERTopic, projected them to two dimensions with t-SNE, and had domain experts validate the clusters. The methodology won Best Paper at the International Conference on IoT, Cloud and Data Science.',
-        'The lab is a topic atlas built the same way on a small sample of public arXiv-style abstracts: hover a point to read its title, click a topic to see its defining terms (class-based TF-IDF, as BERTopic uses), and type a query to see where it would land.',
+        'The lab runs the same stages in miniature on titles of well-known papers from six fields: a topic atlas you can re-cluster, topics named by class-based TF-IDF (as BERTopic does), and a box where any title is placed on the map.',
       ],
       pipeline: ['Collect abstracts', 'SciBERT embeddings', 'Reduce dimensions', 'Cluster & c-TF-IDF topics', 't-SNE map', 'Expert validation'],
       demo: 'research',
@@ -501,16 +501,16 @@ window.SITE = {
     {
       slug: 'tweets', title: 'Twitter Sentiment and Phrase Prediction', year: 2021, cat: ['language'],
       theme: 'social', domain: 'Social listening',
-      plain: 'Shows whether people are talking about a topic positively or negatively, and guesses how their sentences tend to continue.',
-      tagline: 'Reads the mood of tweets on any phrase, and predicts what people say next.',
-      stack: ['Python', 'Tweepy', 'NLTK', 'VADER', 'n-gram models'],
+      plain: 'Shows whether people are talking about a topic positively or negatively, and which words and phrases come up most.',
+      tagline: 'Reads the mood of tweets on any phrase, then cleans and counts what people are saying.',
+      stack: ['Python', 'Tweepy', 'NLTK VADER', 'TextBlob', 'Plotly'],
       repo: 'https://github.com/deadven7/Twitter_Sentiment_Analysis_and_Prediction-Machine_Learning',
-      metrics: [['3', 'sentiment classes'], ['Search-driven', 'tweet collection'], ['Next-phrase', 'prediction']],
+      metrics: [['VADER', 'lexicon + rules'], ['pos > neg', 'labelling rule'], ['9-step', 'cleaning pipeline']],
       summary: [
-        'Tweets collected by search phrase are cleaned, tokenised and scored for sentiment; a sequence model then learns which phrases tend to follow a search term.',
-        'Type a sentence and see its sentiment scored live with a lexicon model, then start a phrase and watch an n-gram model suggest continuations.',
+        'Tweets collected through the Twitter API by search phrase are scored with VADER and labelled positive, negative or neutral, then cleaned — URLs, HTML, emoji, mentions, contractions, punctuation, stopwords — tokenised and stemmed so the most frequent words and n-grams can be counted.',
+        'The lab re-implements VADER and the notebook’s labelling rule: score any sentence and see which words drive it, score a batch and get the notebook’s summary, and watch each cleaning step transform a tweet.',
       ],
-      pipeline: ['Collect tweets by phrase', 'Clean & tokenise', 'Score sentiment', 'Learn phrase sequences', 'Predict continuations'],
+      pipeline: ['Collect tweets by phrase', 'VADER polarity scores', 'Label: pos > neg', 'Clean, tokenise, stem', 'Top words & n-grams'],
       demo: 'tweets',
     },
     {
@@ -527,21 +527,6 @@ window.SITE = {
       ],
       pipeline: ['Parse tweet JSON', 'Users → PostgreSQL', 'Tweets → MongoDB', 'Index & partition', 'Search API', 'Cache hot queries'],
       demo: 'tweetsearch',
-    },
-    {
-      slug: 'reviews', title: 'Film Review Sentiment Classifier', year: 2021, cat: ['language', 'dl'],
-      theme: 'cinema', domain: 'Text classification',
-      plain: 'Reads a movie review and decides whether it’s positive or negative.',
-      tagline: 'A neural network that reads a movie review and decides how the writer felt.',
-      stack: ['TensorFlow', 'Keras', 'IMDb dataset'],
-      repo: 'https://github.com/deadven7/Text_Classifier-Neural_Networks',
-      metrics: [['50,000', 'IMDb reviews'], ['Embedding', '+ pooling network'], ['Live', 'in your browser']],
-      summary: [
-        'A Keras network with a learned word embedding and average pooling, trained on the IMDb review set. The lab trains the same architecture in miniature on a sample of reviews and runs it in the browser.',
-        'Write or paste a review and see the score; the words that pushed it most are highlighted.',
-      ],
-      pipeline: ['Integer-encoded reviews', 'Pad to fixed length', 'Embedding → pooling', 'Dense → sigmoid', 'Score sentiment'],
-      demo: 'reviews',
     },
     {
       slug: 'chatbot', title: 'Support Chatbot', year: 2021, cat: ['language', 'dl'],
