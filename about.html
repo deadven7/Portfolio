@@ -21,7 +21,7 @@
     <div class="mv-grain" aria-hidden="true"></div>
     <div class="mv-scan" aria-hidden="true"></div>
     <div class="mv-shade" id="mvShade" aria-hidden="true"></div>
-    <div class="mv-titles" id="mvTitles"><h1 class="mv-title" id="mvTitle">Who I Am</h1></div>
+    <div class="mv-titles" id="mvTitles"><p class="mv-pre">presenting</p><h1 class="mv-title" id="mvTitle">Who I Am</h1></div>
   </header>
 
   <!-- the network: one pinned stage, the scroll walks through it -->
@@ -32,40 +32,69 @@
       <img class="net-face" id="netFace" src="assets/img/amaan.jpg" alt="Amaan Vora">
 
       <div class="beat" data-k="0">
-        <p class="slug">FADE IN:</p>
         <h2 class="hello">Hi, I’m Amaan.</h2>
+        <p class="hello-sub">I’m a data scientist at a leading health provider, building AI that helps clinicians act sooner.</p>
       </div>
 
       <div class="beat" data-k="1">
-        <p class="slug">FAMILY COMPUTER — 2002</p>
-        <p class="line">He loses at Uno and wants to know how the cards were dealt.</p>
-        <p class="slug cut">2013 — his first Java program deals them.</p>
+        <p class="slug">THE FAMILY COMPUTER</p>
+        <p class="line">He lost at Uno on the family computer and wanted to know how the cards were dealt. At twelve, a few nested loops in Java dealt them for him.</p>
       </div>
       <div class="beat" data-k="2">
-        <p class="slug">MUSIC ROOM — 2011</p>
-        <p class="line">Six strings, eighty-eight keys, paint drying on the desk. Somewhere under it, a poem.</p>
+        <p class="slug">THE MUSIC ROOM</p>
+        <p class="line">Guitar, piano, and a sketchbook he’d kept since six. One of his poems won a national award. He still sees the picture before he sees the numbers.</p>
       </div>
       <div class="beat" data-k="3">
-        <p class="slug">STATE TENNIS FINAL — 2010</p>
-        <p class="line">Runner-up. He replays every point on the drive home.</p>
+        <p class="slug">THE OLYMPIADS</p>
+        <p class="line">Maths, science and cyber Olympiads, quiz finals, a gold medal at a NASA space olympiad. Puzzles were the fun part.</p>
       </div>
       <div class="beat" data-k="4">
-        <p class="slug">STATE CHESS CHAMPIONSHIP — 2012</p>
-        <p class="line">Move thirty-one. He’s already looking at thirty-six.</p>
-        <p class="slug cut">LATER — black holes, until 2 a.m.</p>
+        <p class="slug">THE CHESSBOARD, THEN THE SKY</p>
+        <p class="line">State-level chess taught him to look five moves ahead. Black holes kept him up until 2 a.m.</p>
       </div>
 
       <div class="beat now" data-k="5">
-        <p class="slug">SIEMENS — 2021</p>
-        <p class="line">A hundred thousand customer comments. By the end of the week, they’re sorted by what people meant.</p>
+        <p class="slug">LANGUAGE · 2021–22</p>
+        <p class="line">At Siemens, customer comments in fourteen languages, grouped by what people meant. Then a quarter of a million research papers, mapped by topic — and a Best Paper award.</p>
       </div>
       <div class="beat now" data-k="6">
-        <p class="slug">RUTGERS, STATISTICS — 2023</p>
-        <p class="line">A random forest has to be rebuilt in another language. It comes back fifteen percent sharper.</p>
+        <p class="slug">RIGOUR · 2023–25</p>
+        <p class="line">A master’s in statistics at Rutgers. Then molecules: models that tell chemists which compounds are worth making next.</p>
       </div>
       <div class="beat now" data-k="7">
-        <p class="slug">THE DAILY TARGUM — 2023</p>
-        <p class="line">The paper moves to the cloud. The bill halves. The readership doesn’t.</p>
+        <p class="slug">CARE · 2026</p>
+        <p class="line">Now at Virtua Health: sepsis alerts across three hospitals, and models that read what clinicians write.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- in his own words -->
+  <section class="more" id="more">
+    <div class="wrap">
+      <div class="more-lead reveal">
+        <p class="eyebrow">in my own words</p>
+        <h2>Two halves, one way of working</h2>
+        <p>I grew up between a chessboard and a sketchbook, and I’ve never had to choose. The analytical half asks whether a result is real — whether it holds on next month’s patients, survives a confounder, beats the baseline for the right reason. The creative half asks what the result means to the person reading it, and how to show it so they act on it. Most of my best work has needed both.</p>
+      </div>
+      <div class="more-grid">
+        <div class="more-col reveal d1">
+          <h3>What I do</h3>
+          <p>I build machine learning systems that work outside the notebook. At Virtua Health that means clinical risk models, language pipelines that read clinical documentation, and assistants that answer staff questions with sources attached — taken all the way to production and explained to physicians and executives.</p>
+          <p>Before that, I built molecular models for drug discovery at Rutgers New Jersey Medical School, and engagement and recommendation systems for The Daily Targum.</p>
+        </div>
+        <div class="more-col reveal d2">
+          <h3>How I work</h3>
+          <ul>
+            <li><b>Measure honestly.</b> Temporal validation, held-out data, the right metric for the cost of being wrong.</li>
+            <li><b>Explain everything.</b> If a clinician can’t see why a patient was flagged, the model isn’t finished.</li>
+            <li><b>Ship it.</b> A model that never leaves the notebook helps no one.</li>
+            <li><b>Keep it light.</b> This site runs on slow connections for the same reason my pipelines run on modest hardware: good engineering is efficient.</li>
+          </ul>
+        </div>
+        <div class="more-col reveal d3">
+          <h3>Off the clock</h3>
+          <p>Guitar and piano, painting and calligraphy, a long-running blog that takes films and TV apart scene by scene, and the occasional night spent reading about black holes.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -73,17 +102,21 @@
   <!-- credits -->
   <section class="credits" id="credits">
     <div class="wrap"><div class="roll">
-      <p class="tbc">Wanna find out more?</p>
-      <p class="edu-line">M.S. Statistics (Data Science), Rutgers · B.Tech Computer Science, SRM</p>
+      <p class="tbc">To be continued…</p>
+      <p class="edu-line">M.S. Statistics (Data Science), Rutgers · B.Tech Computer Science and Engineering, SRM</p>
       <div class="roll-cta">
         <a class="tkt" href="projects.html" aria-label="See the projects">
           <span class="tkt-stub"><small>admit</small><b>one</b><em>№ 007</em></span>
-          <span class="tkt-main"><small>now showing</small><b>the projects</b><i>seven live labs <span class="arr">→</span></i></span>
+          <span class="tkt-main"><small>now showing</small><b>the projects</b><i>twenty-two live labs <span class="arr">→</span></i></span>
         </a>
         <a class="tl-btn" href="work.html" aria-label="Walk past the places I have worked">
           <span class="tl-track" aria-hidden="true"><i></i><i></i><i></i><i></i><u></u></span>
           <span class="tl-txt"><b>the work</b><small>2020 → now</small></span>
         </a>
+      </div>
+      <div class="talk">
+        <h2>Let’s talk.</h2>
+        <p>I’m always glad to hear about hard problems in health, language or anything with messy data.</p>
       </div>
       <div class="contact-row">
         <a class="stamp" href="mailto:amaan.vora.e@gmail.com" aria-label="Email Amaan">
@@ -100,6 +133,9 @@
         <a class="soc kg" href="https://www.kaggle.com/amaanvora" target="_blank" rel="noopener" aria-label="Kaggle">
           <span class="ico" data-icon="kaggle"></span><span class="soc-txt"><b>Kaggle</b><small>leaderboard</small></span>
           <span class="kg-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        </a>
+        <a class="soc cvb" href="assets/docs/Amaan_Vora_Resume.pdf" download aria-label="Download résumé (PDF)">
+          <span class="ico" data-icon="cv"></span><span class="soc-txt"><b>Résumé</b><small>download · PDF</small></span>
         </a>
       </div>
     </div></div>

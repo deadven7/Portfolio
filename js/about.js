@@ -111,11 +111,11 @@
     { lv: 0, i: 0, theme: 'intro', col: PAL.green },
     { lv: 1, i: 0, theme: 'computers', col: PAL.cyan, label: 'computers' },
     { lv: 1, i: 1, theme: 'creative', col: PAL.bronze, label: 'creative' },
-    { lv: 1, i: 2, theme: 'sports', col: PAL.lime, label: 'sports' },
+    { lv: 1, i: 2, theme: 'sports', col: PAL.lime, label: 'puzzles' },
     { lv: 1, i: 3, theme: 'analytics', col: PAL.gold, label: 'analytics' },
     { lv: 2, i: 0, theme: 'language', col: PAL.pink, label: 'language' },
-    { lv: 2, i: 1, theme: 'rigor', col: PAL.teal, label: 'rigor' },
-    { lv: 2, i: 2, theme: 'delivery', col: PAL.blue, label: 'delivery' },
+    { lv: 2, i: 1, theme: 'rigor', col: PAL.teal, label: 'rigour' },
+    { lv: 2, i: 2, theme: 'delivery', col: PAL.blue, label: 'care' },
   ];
   let beat = 0;
   const weights = BEATS.map((_, k) => k === 0 ? 1 : 0);
@@ -127,7 +127,7 @@
   const geo = W => { const H = FG.h, rows = [Math.max(H * .14, 92), H * .43, H * .72];
     const xs = [[W / 2], [0, 1, 2, 3].map(i => W / 2 + (i - 1.5) * Math.min(W * .78, 720) / 3), [0, 1, 2].map(i => W / 2 + (i - 1) * Math.min(W * .6, 520) / 2)];
     return { rows, xs, rowY: rows[1] }; };
-  function placeBeats() { const { rows } = geo(FG.w); beatEls.forEach((el, k) => { el.style.top = (rows[BEATS[k].lv] + (k === 0 ? 48 : 26)) + 'px'; }); }
+  function placeBeats() { const { rows } = geo(FG.w); beatEls.forEach((el, k) => { el.style.top = (rows[BEATS[k].lv] + (k === 0 ? 38 : 26)) + "px"; }); }
   placeBeats(); addEventListener('resize', () => setTimeout(placeBeats, 80));
 
   /* ---------- background themes ---------- */
@@ -378,6 +378,11 @@
     oval(c, hx + f[0] * 9.6 + d[0] * 1.5, hy + f[1] * 9.6 + d[1] * 1.5, 2.2, 2.6, fa);
     oval(c, hx - f[0] * 2 + d[0] * 3, hy - f[1] * 2 + d[1] * 3, 10.2, 8.2, fa);
     leg(P.lF, P.kF); arm(P.aF, P.bF);
+    // suit seams, cut out of the silhouette so they glow with the outline colour
+    c.save(); c.globalCompositeOperation = 'destination-out'; c.lineWidth = 1.5; c.lineCap = 'round'; c.beginPath();
+    c.moveTo(58, 9); c.lineTo(44, 3); c.lineTo(30, 4);      // chest to waist
+    c.moveTo(4, -7); c.lineTo(4, 7);                         // belt
+    c.stroke(); c.restore();
   }
 
   /* ---------- painting the silhouette: one solid shape, lit from above, rim-lit from behind ---------- */
@@ -390,20 +395,27 @@
     let out = null;
     sil.setTransform(1, 0, 0, 1, 0, 0); sil.clearRect(0, 0, px, px); sil.setTransform(DPRH, 0, 0, DPRH, 0, 0);
     sil.translate(B / 2, B / 2); sil.rotate(rot); sil.scale(s * sq * (flip ? -1 : 1), s); sil.fillStyle = '#fff'; out = drawFn(sil);
-    // shading
+    // volume: a dark suit lit from the upper left, falling into shadow (reads as a rounded, 3D body)
     sh.setTransform(1, 0, 0, 1, 0, 0); sh.globalCompositeOperation = 'source-over'; sh.clearRect(0, 0, px, px); sh.drawImage(bufs[0], 0, 0);
-    sh.globalCompositeOperation = 'source-in'; const g = sh.createLinearGradient(px * .25, px * .1, px * .7, px * .9); g.addColorStop(0, '#3a5a8e'); g.addColorStop(.45, '#1c2c4a'); g.addColorStop(1, '#0a101d'); sh.fillStyle = g; sh.fillRect(0, 0, px, px);
-    // a thin backlit edge on the upper-left of the shape
+    sh.globalCompositeOperation = 'source-in'; const g = sh.createLinearGradient(px * .2, px * .15, px * .75, px * .85); g.addColorStop(0, '#22364f'); g.addColorStop(.4, '#0d1726'); g.addColorStop(1, '#03060b'); sh.fillStyle = g; sh.fillRect(0, 0, px, px);
+    // a soft specular sheen where the light hits
+    const rg = sh.createRadialGradient(px * .4, px * .38, 0, px * .4, px * .38, px * .32); rg.addColorStop(0, 'rgba(120,200,255,.22)'); rg.addColorStop(1, 'rgba(120,200,255,0)'); sh.globalCompositeOperation = 'source-atop'; sh.fillStyle = rg; sh.fillRect(0, 0, px, px);
+    // inner light line on the lit side: the edge minus itself shifted down-right
     edge.setTransform(1, 0, 0, 1, 0, 0); edge.globalCompositeOperation = 'source-over'; edge.clearRect(0, 0, px, px); edge.drawImage(bufs[0], 0, 0);
-    edge.globalCompositeOperation = 'destination-out'; edge.drawImage(bufs[0], 1.6 * DPRH, 2 * DPRH);
-    edge.globalCompositeOperation = 'source-in'; edge.fillStyle = 'rgba(170,236,255,.42)'; edge.fillRect(0, 0, px, px);
+    edge.globalCompositeOperation = 'destination-out'; edge.drawImage(bufs[0], 1.4 * DPRH, 1.8 * DPRH);
+    edge.globalCompositeOperation = 'source-in'; edge.fillStyle = 'rgba(160,240,255,.9)'; edge.fillRect(0, 0, px, px);
     sh.globalCompositeOperation = 'source-atop'; sh.drawImage(bufs[2], 0, 0);
-    // rim: the silhouette, tinted, offset a hair in every direction
-    edge.globalCompositeOperation = 'source-over'; edge.clearRect(0, 0, px, px); edge.drawImage(bufs[0], 0, 0); edge.globalCompositeOperation = 'source-in'; edge.fillStyle = '#9feaff'; edge.fillRect(0, 0, px, px);
+    // a darker core-shadow line on the far side, for depth
+    edge.globalCompositeOperation = 'source-over'; edge.clearRect(0, 0, px, px); edge.drawImage(bufs[0], 0, 0);
+    edge.globalCompositeOperation = 'destination-out'; edge.drawImage(bufs[0], -2.2 * DPRH, -2.6 * DPRH);
+    edge.globalCompositeOperation = 'source-in'; edge.fillStyle = 'rgba(0,0,0,.55)'; edge.fillRect(0, 0, px, px);
+    sh.drawImage(bufs[2], 0, 0);
+    // the Tron outline: the whole silhouette in cyan, drawn as a thin glowing ring around the body
+    edge.globalCompositeOperation = 'source-over'; edge.clearRect(0, 0, px, px); edge.drawImage(bufs[0], 0, 0); edge.globalCompositeOperation = 'source-in'; edge.fillStyle = '#6ff3ff'; edge.fillRect(0, 0, px, px);
     c.save(); c.globalAlpha = a; const X = x - B / 2, Y = y - B / 2;
-    if (glow) { c.shadowColor = 'rgba(94,230,255,.38)'; c.shadowBlur = 11 * glow; c.drawImage(bufs[2], X, Y, B, B); c.shadowBlur = 0; }
-    c.globalAlpha = a * .75; for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [.75, .75], [-.75, .75], [.75, -.75], [-.75, -.75]]) c.drawImage(bufs[2], X + ox, Y + oy, B, B);
-    c.globalAlpha = a; c.drawImage(bufs[1], X, Y, B, B); c.restore();
+    if (glow) { c.shadowColor = 'rgba(80,235,255,.85)'; c.shadowBlur = 9 * glow; c.drawImage(bufs[2], X, Y, B, B); c.shadowBlur = 0; }
+    for (const [ox, oy] of [[1, 0], [-1, 0], [0, 1], [0, -1], [.7, .7], [-.7, .7], [.7, -.7], [-.7, -.7]]) c.drawImage(bufs[2], X + ox, Y + oy, B, B);
+    c.drawImage(bufs[1], X, Y, B, B); c.restore();
     if (out) { const tf = (p) => { const lx = p[0] * s * sq * (flip ? -1 : 1), ly = p[1] * s, cr = Math.cos(rot), sr = Math.sin(rot); return [x + lx * cr - ly * sr, y + lx * sr + ly * cr]; }; return { hl: tf(out.hl), hr: tf(out.hr) }; }
     return null;
   }
@@ -425,7 +437,7 @@
   }
   const hits = (r, obs, pad = 14) => obs.some(o => r.left < o.right + pad && r.right > o.left - pad && r.top < o.bottom + pad && r.bottom > o.top - pad);
   const inView = r => r.left >= 6 && r.top >= 64 && r.right <= innerWidth - 6 && r.bottom <= innerHeight - 4;
-  const heroScale = () => clamp(Math.min(innerWidth, innerHeight) / 1000, .5, .82);
+  const heroScale = () => clamp(Math.min(innerWidth, innerHeight) / 1000, .5, .82) * .52;
   const frontRect = (x, y, s) => ({ left: x - 46 * s, right: x + 46 * s, top: y - 106 * s, bottom: y + 100 * s });
   function freeSpots(s, prefer) { // candidate hover points with nothing underneath, best first
     const W = innerWidth, H = innerHeight, obs = obstacles(), out = [];
@@ -483,6 +495,22 @@
     c.restore();
   }
 
+  /* ---------- the sonic boom: a vapour cone and a shock ring when he really goes ---------- */
+  const booms = [];
+  function drawBooms(c, dt) {
+    for (let i = booms.length - 1; i >= 0; i--) { const b = booms[i]; b.t += dt; const u = b.t / 1.1; if (u >= 1) { booms.splice(i, 1); continue; }
+      const ca = Math.cos(b.ang), sa = Math.sin(b.ang), cx = b.x - ca * 40 * b.s, cy = b.y - sa * 40 * b.s;
+      c.save(); c.translate(cx, cy); c.rotate(b.ang);
+      // vapour cone: two arcs opening backwards
+      const R = (40 + 260 * u) * b.s / .5 * .5, fa = 1 - u;
+      c.strokeStyle = `rgba(200,245,255,${(.55 * fa).toFixed(3)})`; c.lineWidth = 2 * fa + .5;
+      c.beginPath(); c.ellipse(-R * .35, 0, R * .5, R, 0, Math.PI * .5, Math.PI * 1.5); c.stroke();
+      c.strokeStyle = `rgba(111,243,255,${(.3 * fa).toFixed(3)})`; c.beginPath(); c.ellipse(-R * .55, 0, R * .62, R * 1.2, 0, Math.PI * .55, Math.PI * 1.45); c.stroke();
+      // shock ring
+      c.strokeStyle = `rgba(255,255,255,${(.35 * fa * fa).toFixed(3)})`; c.lineWidth = 1; c.beginPath(); c.arc(0, 0, R * 1.4, 0, TAU); c.stroke();
+      c.restore(); }
+  }
+
   /* ---------- the actor ---------- */
   const act = { mode: 'follow', t: 0, from: null, spot: null, plays: 0, knocked: [false, false], pos: { x: innerWidth / 2, y: innerHeight * .8 }, fade: 1, k: 0, ang: -Math.PI / 2 + .1, flip: false, dy: 0, turn: 1 };
   const born = performance.now();
@@ -494,7 +522,8 @@
   function startReturn() { act.from = { ...act.pos }; act.mode = 'return'; act.t = 0; }
   setInterval(() => {
     const now = performance.now();
-    if (act.mode === 'follow' && !RM && act.plays < 2 && !bannerVisible() && now - lastInput > 5000 && now - born > 6500 && document.visibilityState === 'visible') {
+    const nr = net.getBoundingClientRect(), inNet = nr.top < 0 && nr.bottom > innerHeight;
+    if (act.mode === 'follow' && !RM && act.plays < 2 && inNet && !bannerVisible() && now - lastInput > 5000 && now - born > 6500 && document.visibilityState === 'visible') {
       const sp = knockSpot(); if (!sp) { lastInput = now - 3000; return; }
       act.spot = sp; act.from = { ...act.pos }; act.mode = 'goKnock'; act.t = 0; act.knocked = [false, false]; act.plays++;
     }
@@ -509,12 +538,13 @@
     const c = CP.ctx, W = CP.w, H = CP.h; c.clearRect(0, 0, W, H);
     const show = RM ? 1 : span(since, 1.3, 2.4), s = heroScale(); act.t += dt;
     const flyTo = (from, to, D) => { const u = ease(clamp(act.t / D, 0, 1)), mx = (from.x + to.x) / 2, my = Math.min(from.y, to.y) - 70 * s, x = (1 - u) * (1 - u) * from.x + 2 * (1 - u) * u * mx + u * u * to.x, y = (1 - u) * (1 - u) * from.y + 2 * (1 - u) * u * my + u * u * to.y, dX = 2 * (1 - u) * (mx - from.x) + 2 * u * (to.x - mx), dY = 2 * (1 - u) * (my - from.y) + 2 * u * (to.y - my); return { x, y, ang: Math.atan2(dY, dX), u }; };
-    const flySide = (x, y, ang, k, a) => { const flip = Math.cos(ang) < 0; trail(c, x, y, ang, s, k, tt); const pose = mixPose(POSE.hover, k > .7 ? POSE.dive : POSE.fly, clamp(k * 1.3, 0, 1)); paint(c, x, y, s, flip ? ang - Math.PI : ang, flip, 1, a, cc => side(cc, pose)); };
+    const flySide = (x, y, ang, k, a) => { const flip = Math.cos(ang) < 0; trail(c, x, y, ang, s, k, tt); const pose = mixPose(POSE.fly, POSE.dive, clamp((k - .5) * 2, 0, 1)); paint(c, x, y, s, flip ? ang - Math.PI : ang, flip, 1, a, cc => side(cc, pose)); };
     const look = clamp((mouse.x - act.pos.x) / 400, -1, 1);
+    drawBooms(c, dt);
 
     if (act.mode === 'follow') {
       // the opening: hover under the title; then a dive down to the right edge, where he stays alongside
-      const p = clamp(scrollY / (hero.offsetHeight * .7), 0, 1), m = W < 760 ? 34 * s / .5 : 80 * s / .6;
+      const p = clamp(scrollY / (hero.offsetHeight * .7), 0, 1), m = (W < 760 ? 70 : 120) * s / .42;
       const home = { x: W - m, y: H * .56 }, start = { x: W / 2, y: H * .8 };
       const v = vel;                                   // px per frame, smoothed: + when scrolling down
       act.k = lerp(act.k, clamp(Math.abs(v) / 16, 0, 1), .12);
@@ -527,21 +557,25 @@
       y += Math.sin(tt * 2.1) * 4 * s / .6;
       act.pos.x = lerp(act.pos.x, x, .2); act.pos.y = lerp(act.pos.y, y, .2);
       // which way he's heading: rising, hovering, or diving with the scroll
-      const intro = p > .02 && p < .98 ? 1 : 0, down = v > .5 || intro, want = act.k > .12 || intro ? (down ? Math.PI / 2 - .12 : -Math.PI / 2) : -Math.PI / 2 + .1;
-      act.ang = lerp(act.ang, want, .1);
-      const r = frontRect(act.pos.x, act.pos.y, s); act.fade = lerp(act.fade, p >= 1 && hits(r, obstacles(), 4) ? 0 : 1, .12);
+      // always flying: diving with the scroll, climbing against it, and otherwise holding a level glide into the wind
+      const intro = p > .02 && p < .98 ? 1 : 0, down = v > .5 || intro, glide = Math.PI + .08 + Math.sin(tt * 1.3) * .035 + Math.sin(tt * 7.1) * .008;
+      const want = act.k > .12 || intro ? (down ? Math.PI / 2 - .12 : -Math.PI / 2) : glide;
+      act.ang = lerp(act.ang, want + (want - act.ang > Math.PI ? -TAU : want - act.ang < -Math.PI ? TAU : 0), .08);
+      if (act.k > .78 && tt - (act.boomAt || 0) > 1.6) { act.boomAt = tt; booms.push({ x: act.pos.x, y: act.pos.y, ang: act.ang, t: 0, s }); }
+      act.fade = 1;
       const k = Math.max(act.k, intro * .8);
       // idle by the page he turns to face us, hands on hips; any real scroll and he's flying again
-      const wantView = k > .22 || p < 1 ? 'side' : 'front';
+      const wantView = 'side';
       if (wantView !== act.view && act.turnT == null) act.turnT = 0;
       let sq = 1; if (act.turnT != null) { act.turnT += dt / .22; if (act.turnT >= .5 && act.swapped !== true) { act.view = wantView; act.swapped = true; } sq = Math.max(.12, Math.abs(1 - act.turnT * 2)); if (act.turnT >= 1) { act.turnT = null; act.swapped = false; } }
       act.view = act.view || 'side';
-      act.left = mouse.x < act.pos.x - 40 ? true : mouse.x > act.pos.x + 40 ? false : (act.left ?? true); const flip = act.left;
+      const flip = Math.cos(act.ang) < 0;
       if (act.view === 'front') {
         paint(c, act.pos.x, act.pos.y, s, 0, false, sq, show * act.fade, cc => front(cc, { L: 'hip', R: 'hip', look, t: tt }));
       } else {
         trail(c, act.pos.x, act.pos.y, act.ang, s, k, tt);
-        const pose = mixPose(POSE.hover, act.k > .7 ? POSE.dive : POSE.fly, clamp(k * 1.25, 0, 1)), rot = act.ang;
+        // wind on the body while gliding: the trailing leg and arm flutter a little
+        const base = mixPose(POSE.fly, POSE.dive, clamp((act.k - .5) * 2, 0, 1)), pose = { ...base, kB: base.kB + Math.sin(tt * 5.3) * .06, lB: base.lB + Math.sin(tt * 3.1) * .025, aB: base.aB + Math.sin(tt * 4.2 + 1) * .03 }, rot = act.ang;
         paint(c, act.pos.x, act.pos.y, s, flip ? rot - Math.PI : rot, flip, sq, show * act.fade, cc => side(cc, pose));
       }
     } else if (act.mode === 'goKnock' || act.mode === 'goFinale') {
@@ -570,10 +604,12 @@
       else if (t >= 1.7) { P[near] = 'point'; const sx = sp.x + (near === 'L' ? -25.5 : 25.5) * s, sy = sp.y + bob - 57 * s; P.aim = [tb.left + tb.width / 2 - sx, tb.top + tb.height / 2 - sy]; }
       paint(c, sp.x, sp.y + bob, s, 0, false, .2 + .8 * turn, 1, cc => front(cc, P));
     } else if (act.mode === 'return') {
-      const D = .7, p = clamp(scrollY / (hero.offsetHeight * .7), 0, 1), m = W < 760 ? 34 * s / .5 : 80 * s / .6, to = p < 1 ? { x: W / 2, y: H * .8 } : { x: W - m, y: H * .56 };
+      const D = .7, p = clamp(scrollY / (hero.offsetHeight * .7), 0, 1), m = (W < 760 ? 70 : 120) * s / .42, to = p < 1 ? { x: W / 2, y: H * .8 } : { x: W - m, y: H * .56 };
       const f = flyTo(act.from, to, D); act.pos = { x: f.x, y: f.y }; flySide(f.x, f.y, f.ang, .8, 1);
       if (act.t >= D) { act.mode = 'follow'; act.spot = null; lastInput = performance.now(); }
     }
+    // he flies behind the words, never over them: cut the text boxes out of his layer unless he's knocking or saluting
+    if (act.mode !== 'knock' && act.mode !== 'finale') { const obs = obstacles(); if (obs.length) { c.save(); c.globalCompositeOperation = 'destination-out'; c.fillStyle = '#000'; for (const r of obs) { c.fillRect(r.left - 6, r.top - 4, r.width + 12, r.height + 8); } c.restore(); } }
   })(performance.now());
 
   /* ---------- themed buttons ---------- */

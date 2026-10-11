@@ -5,20 +5,25 @@
   const idx = Math.max(0, S.projects.findIndex(p => p.slug === slug));
   const P = S.projects[idx];
   document.title = `${P.title} — Amaan Vora`;
+  const ORN = {"finance": ["◆", "market data"], "bank": ["▤", "risk desk"], "survey": ["◎", "survey"], "stream": ["▶", "catalogue"], "show": ["✦", "on air"], "security": ["⬢", "secured"], "claims": ["✚", "claims desk"], "docs": ["¶", "document"], "research": ["§", "archive"], "maritime": ["⚓", "manifest"], "realestate": ["⌂", "listing"], "device": ["▯", "spec sheet"], "sports": ["●", "scorecard"], "world": ["◍", "briefing"], "publichealth": ["—", "report"], "social": ["@", "feed"], "search": ["⌕", "console"], "cinema": ["★", "reviews"], "chat": ["…", "help desk"], "game": ["♛", "board"], "puzzle": ["#", "puzzle"]};
+  if (P.theme) document.body.dataset.theme = P.theme;
 
   document.getElementById('pdHead').innerHTML = `
     <div class="crumbs"><a href="projects.html">~/projects</a> / ${P.slug}</div>
+    ${P.domain ? `<span class="pill">${P.domain}</span>` : ''}
     <h1>${P.title}</h1>
-    <p class="lede">${P.tagline}</p>
+    ${P.plain ? `<p class="plain">${P.plain}</p>` : ''}
+    <p class="lede${P.plain ? ' tech' : ''}">${P.tagline}</p>
     <div class="chips">${P.stack.map(s => `<span class="chip">${s}</span>`).join('')}</div>
     <div class="metrics">${P.metrics.map(([b, s]) => `<div><b>${b}</b><span>${s}</span></div>`).join('')}</div>
     <div class="actions">
-      <a class="btn" href="${P.repo}" target="_blank" rel="noopener">${ICONS.github} source on GitHub</a>
+      ${P.repo ? `<a class="btn" href="${P.repo}" target="_blank" rel="noopener">${ICONS.github} source on GitHub</a>` : ''}
       ${P.live ? `<a class="btn primary" href="${P.live}" target="_blank" rel="noopener">full app on Hugging Face <span class="arr">↗</span></a>` : ''}
       <a class="btn" href="#lab">jump to lab <span class="arr">↓</span></a>
     </div>`;
   document.querySelectorAll('.actions .btn svg').forEach(s => { s.style.width = '16px'; s.style.height = '16px'; s.style.fill = 'currentColor'; });
   document.getElementById('labTitle').textContent = `~/${P.slug}/lab — ${P.year}`;
+  const o = ORN[P.theme]; if (o) { const live = document.querySelector('.lab-bar .live'); const sp = document.createElement('span'); sp.className = 'orn'; sp.innerHTML = `<b>${o[0]}</b>${o[1]}`; live.before(sp); }
 
   document.getElementById('story').innerHTML = `
     <div><p class="eyebrow">the project</p>${P.summary.map(s => `<p>${s}</p>`).join('')}</div>

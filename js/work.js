@@ -21,14 +21,24 @@
      ========================================================= */
   const F = 10, CURB = 5.5, SWH = .15, CAMX = .35, EYE = 1.64;
   const CROSS = [[72, 84, 'Bayes St'], [142, 154, 'Gradient Ave']];
-  const ZMAX = 138;
+  const ZMAX = 164;
   const STYLE = [
     { side: 1, door: 24, s0: 12, s1: 36, accent: '#2f9e6e' },
     { side: -1, door: 52, s0: 38, s1: 66, accent: '#3cc3c9' },
     { side: 1, door: 95, s0: 84, s1: 106, accent: '#cc0033' },
     { side: -1, door: 129.7, s0: 116, s1: 142, accent: '#e9c46a' },
+    { side: 1, door: 167, s0: 154, s1: 180, accent: '#2a7de1' },
   ];
-  const ORGS = SITE.work.slice(0, 4).map((w, i) => ({ ...w, ...STYLE[i], idx: i }));
+  /* five buildings; the university building holds the research and education entries */
+  const EXP = SITE.experience, byKey = k => EXP.find(e => e.key === k);
+  const GROUPS = [
+    { keys: ['kaiser'], pin: 'Kaiser' },
+    { keys: ['siemens'], pin: 'Siemens' },
+    { keys: ['njms', 'rutgers-ra', 'rutgers-ms', 'srm'], pin: 'Rutgers', org: 'Rutgers University', role: 'Research · M.S. · and where it started', dates: '2018 – 2025', plaque: 'Rutgers University' },
+    { keys: ['targum'], pin: 'Targum' },
+    { keys: ['virtua'], pin: 'Virtua' },
+  ];
+  const ORGS = GROUPS.map((g, i) => { const e = g.keys.map(byKey), f = e[0]; return { org: g.org || f.org, role: g.role || f.role, dates: g.dates || f.dates, plaqueText: g.plaque || f.org, logo: f.logo, mono: f.mono, entries: e, pin: g.pin, ...STYLE[i], accent: f.accent || STYLE[i].accent, idx: i }; });
   const STOPS = ORGS.map(o => ({ s: o.door - 17, org: o, passed: false }));
 
   /* ---------- textures: tileable materials (512²) and painted signs (1024×256) ---------- */
@@ -77,6 +87,7 @@
     S.ticker = sign(16, (x, W, H) => { x.fillStyle = '#0c0805'; x.fillRect(0, 0, W, H); const m = 'BLACK HOLES: STILL UP AT 2 A.M.   •   KNIGHT TO F6, SIX MOVES AHEAD   •   ';
       x.font = '700 120px JetBrains Mono, monospace'; const w = x.measureText(m).width, k = W / w; x.save(); x.scale(k, 1); x.fillStyle = '#ffb547'; x.shadowColor = '#ff9a1f'; x.shadowBlur = 14; x.textBaseline = 'middle'; x.fillText(m, 0, H * .54); x.restore();
       x.fillStyle = 'rgba(12,8,5,.55)'; for (let i = 0; i < H; i += 8) x.fillRect(0, i, W, 3); });
+    S.virtua = sign(7, (x, W, H) => { x.fillStyle = '#f7f9fb'; x.fillRect(0, 0, W, H); x.fillStyle = '#2a7de1'; const cx = H * .62, cy = H / 2, a = H * .13, b = H * .36; x.fillRect(cx - a, cy - b, a * 2, b * 2); x.fillRect(cx - b, cy - a, b * 2, a * 2); txt(x, 'VIRTUA HEALTH', '700 #px Inter, sans-serif', 140, '#173a63', W / 2 + H * .45, H * .55, W - H * 1.6, 14); });
     S.newsroom = sign(10, (x, W, H) => { x.fillStyle = '#15120d'; x.fillRect(0, 0, W, H); txt(x, 'NEWSROOM  ·  EST. 1869', '600 #px JetBrains Mono, monospace', 120, '#e9c46a', W / 2, H * .55, W * .86, 8); });
     S.marquee = sign(6.5, (x, W, H) => { x.fillStyle = '#1a0709'; x.fillRect(0, 0, W, H); x.fillStyle = '#f6e7c0'; for (let i = 18; i < W; i += 30) for (const y of [16, H - 16]) { x.beginPath(); x.arc(i, y, 7, 0, 7); x.fill(); }
       txt(x, 'NOW SHOWING', '600 #px Cinzel, Georgia, serif', 46, '#e9c46a', W / 2, H * .3, W * .6, 12); txt(x, 'WHO I AM', '700 #px Cinzel, Georgia, serif', 112, '#fff4dc', W / 2, H * .64, W * .8, 26); });
@@ -104,7 +115,7 @@
       const hA = ((now.getHours() % 12) + now.getMinutes() / 60) / 12 * Math.PI * 2, mA = now.getMinutes() / 60 * Math.PI * 2;
       x.lineWidth = 12; x.beginPath(); x.moveTo(W / 2, H / 2); x.lineTo(W / 2 + Math.sin(hA) * H * .22, H / 2 - Math.cos(hA) * H * .22); x.stroke(); x.lineWidth = 7; x.beginPath(); x.moveTo(W / 2, H / 2); x.lineTo(W / 2 + Math.sin(mA) * H * .34, H / 2 - Math.cos(mA) * H * .34); x.stroke(); });
     ORGS.forEach(o => { o.plaque = sign(1.6, (x, W, H) => { const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#c9a35a'); g.addColorStop(.5, '#f0d48e'); g.addColorStop(1, '#9c7a3a'); x.fillStyle = g; x.fillRect(0, 0, W, H); x.strokeStyle = '#6e5222'; x.lineWidth = 6; x.strokeRect(12, 12, W - 24, H - 24);
-      const parts = o.org.split(' '), a = parts.slice(0, Math.ceil(parts.length / 2)).join(' '), b = parts.slice(Math.ceil(parts.length / 2)).join(' '); txt(x, a, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .38, W * .84); txt(x, b, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .64, W * .84); }); });
+      const parts = o.plaqueText.split(' '), a = parts.slice(0, Math.ceil(parts.length / 2)).join(' '), b = parts.slice(Math.ceil(parts.length / 2)).join(' '); txt(x, a, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .38, W * .84); txt(x, b, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .64, W * .84); }); });
   }
 
   /* =========================================================
@@ -387,6 +398,31 @@
       fBox(g, side, ta, tb, h, h + 9, 4, 9.2, wc, wm, 1.6); fBox(g, side, ta - .2, tb + .2, h + 9, h + 9.5, 3.8, 9.4, lime, M0);
       fSign(g, side, tc - 1.4, tc + 1.4, h + 4.6, h + 7.4, 3.97, S.clock, [1, 1, 1], .5, 0);
       { const x0 = fx(side, 3.8), x1 = fx(side, 9.4), xc = (x0 + x1) / 2, y = h + 9.5, top = [xc, y + 4.2, -tc], c = [[x0, y, -ta + .2], [x1, y, -ta + .2], [x1, y, -tb - .2], [x0, y, -tb - .2]], rc = hex('#3d5a52'); for (let k = 0; k < 4; k++) g.tri(c[k], c[(k + 1) % 4], top, rc, M0); }
+    } else if (o.idx === 4) { // Virtua Health — a modern hospital pavilion: white panels, blue glass bands, a canopy
+      const h = 30, wc = hex('#eef1f3'), wm = M(T.concrete), glassC = hex('#3a6f9a');
+      fBox(g, side, s0, s1, 0, h, .02, 24, wc, wm, 2.4, streetFace(side) + '-y');
+      // ground floor: full-height lobby glazing behind slim mullions
+      fBox(g, side, s0, s1, 0, 5.4, .7, .72, hex('#1b2630'), M0);
+      for (let s = s0 + .4; s < s1 - .3; s += 2) fQuad(g, side, s, Math.min(s + 2, s1 - .4), .1, 5.2, .68, hex('#dfe8ee'), M(-1, .45, .55, 0));
+      for (let s = s0; s <= s1 + .01; s += 2) fBox(g, side, s - .05, s + .05, 0, 5.4, .05, .7, hex('#c9d1d6'), M0);
+      // upper floors: alternating white spandrels and blue ribbon windows
+      for (let y = 5.4; y < h - 2; y += 3.6) {
+        fBox(g, side, s0, s1, y, y + 1.1, -.12, .02, wc, wm, 2.4);
+        for (let s = s0 + .3; s < s1 - .35; s += 1.6) { const lit = r() < .45; fQuad(g, side, s, Math.min(s + 1.6, s1 - .3), y + 1.1, y + 3.6, .12, lit ? WARM[3] : glassC, M(-1, .9, lit ? .5 : 0, 0)); }
+        for (let s = s0 + .3; s <= s1 - .29; s += 1.6) fBox(g, side, s - .03, s + .03, y + 1.1, y + 3.6, .02, .12, hex('#dfe5e9'), M0);
+      }
+      fBox(g, side, s0, s1, h - 2, h, -.15, .02, wc, wm, 2.4);
+      fBox(g, side, s0, s0 + .5, 5.4, h, -.2, .02, wc, wm, 2.4); fBox(g, side, s1 - .5, s1, 5.4, h, -.2, .02, wc, wm, 2.4);
+      // the name across the top, and a blue band
+      fBox(g, side, s0 + 3, s1 - 3, h - 1.9, h - .1, -.22, .02, hex('#f7f9fb'), M0);
+      fSign(g, side, s0 + 3.3, s1 - 3.3, h - 1.8, h - .2, -.23, S.virtua, [1, 1, 1], .5, 1);
+      fBox(g, side, s0, s1, 5.4, 5.75, -.2, .02, acc, M(-1, 0, .5, 1));
+      // entrance canopy over the sidewalk
+      fBox(g, side, o.door - 4.5, o.door + 4.5, 3.6, 3.9, -3.2, .02, hex('#f4f6f8'), M0); fBox(g, side, o.door - 4.5, o.door + 4.5, 3.5, 3.6, -3.22, -3.05, acc, M0);
+      for (const s of [o.door - 4.1, o.door + 4.1]) { const x = fx(side, -2.9); g.tube([x, 0, -s], [x, 3.6, -s], .1, .1, 10, hex('#c9d1d6'), M0); }
+      fBox(g, side, s0 + 4, s1 - 4, h, h + 2.6, 3, 16, hex('#cfd5d9'), M0);
+      // a lit blue cross on the corner
+      const cs = s1 - 2.5; for (const [a, b, c, d] of [[cs - .25, cs + .25, 18.4, 20.2], [cs - .9, cs + .9, 19.05, 19.55]]) { const xa = fx(side, -.35), xb = fx(side, -.25); g.box(Math.min(xa, xb), c, -b, Math.max(xa, xb), d, -a, hex('#3b8cf0'), M(-1, 0, 1.1, 1)); }
     } else { // The Daily Targum — an art-deco newspaper building
       const h = 32, wc = hex('#e1d8c4'), wm = M(T.lime);
       fBox(g, side, s0, s1, 0, h, .02, 22, wc, wm, 2.4, streetFace(side) + '-y');
@@ -565,15 +601,15 @@
   function buildCity() {
     const g = new Geo();
     street(g);
-    const R = [[-30, -8, 22, 'brick', { fire: true }], [-8, 12, 27, 'loft'], [36, 52, 31, 'lime', { tower: true }], [64, 72, 23, 'tan'], [106, 116, 20, 'brick', { fire: true }], [116, 134, 28, 'loft', { tower: true }], [134, 142, 17, 'brown'], [154, 176, 46, 'lime'], [176, 200, 30, 'brick']];
+    const R = [[-30, -8, 22, 'brick', { fire: true }], [-8, 12, 27, 'loft'], [36, 52, 31, 'lime', { tower: true }], [64, 72, 23, 'tan'], [106, 116, 20, 'brick', { fire: true }], [116, 134, 28, 'loft', { tower: true }], [134, 142, 17, 'brown'], [180, 204, 30, 'brick']];
     const L = [[-30, -4, 30, 'lime'], [-4, 12, 18, 'brick', { fire: true, awning: hex('#1f5e46') }], [12, 26, 15.5, 'brown', { tower: true, awning: hex('#7a2a2a') }], [66, 72, 24, 'dark'], [84, 94, 17, 'tan', { awning: hex('#22406b') }], [108, 116, 18.5, 'brown'], [154, 180, 64, 'glass'], [180, 204, 38, 'tan']];
     let k = 0;
     for (const [list, side] of [[R, 1], [L, -1]]) for (const [s0, s1, h, style, ex] of list) { k++; const b = { side, s0, s1, h, style, seed: k * 31 + 7, ...(ex || {}) }; if (style === 'glass') glassTower(g, b); else building(g, b); }
     ORGS.forEach(o => orgBuilding(g, o)); comics(g); music(g); theater(g);
     // the ghost sign on a side wall that pokes above its neighbour
     { const x = fx(1, 4), z0 = -35.98; g.quad([x, 30.2, z0], [x + 8.6, 30.2, z0], [x + 8.6, 25, z0], [x, 25, z0], [1, 1, 1], M(S.ghost), [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0, 1]); }
-    for (const [side, s] of [[1, 4], [-1, 19], [1, 41], [-1, 67], [1, 69], [-1, 88], [1, 112], [-1, 113], [1, 139], [-1, 140]]) lamp(g, side, s);
-    for (const [side, s, sd] of [[1, 6, 1], [-1, 9, 2], [1, 46, 3], [-1, 70, 4], [-1, 89, 5], [1, 113.5, 6], [-1, 111, 7]]) tree(g, side, s, sd);
+    for (const [side, s] of [[1, 4], [-1, 19], [1, 41], [-1, 67], [1, 69], [-1, 88], [1, 112], [-1, 113], [1, 139], [-1, 140], [1, 157], [-1, 158], [1, 183], [-1, 184]]) lamp(g, side, s);
+    for (const [side, s, sd] of [[1, 6, 1], [-1, 9, 2], [1, 46, 3], [-1, 70, 4], [-1, 89, 5], [1, 113.5, 6], [-1, 111, 7], [1, 159.5, 8], [-1, 171, 9]]) tree(g, side, s, sd);
     for (const [x, s, col, cab] of [[3.6, 3, '#f2c230', 1], [-2.7, 8, '#1d2024'], [3.6, 33, '#c9ccd1'], [-2.7, 17, '#7d1d22'], [3.6, 46.5, '#2b3a55'], [-2.7, 42, '#f2c230', 1], [3.6, 66.5, '#16181b'], [-2.7, 62, '#8a8f96'], [3.6, 105, '#31443a'], [-2.7, 90, '#e9e6df'], [3.6, 115, '#f2c230', 1], [-2.7, 113, '#232a3a']]) car(g, x, s, 0, hex(col), cab);
     hydrant(g, -1, 21); hydrant(g, 1, 122);
     for (const [s0, s1, name] of CROSS) { const sn = name === 'Bayes St' ? S.bayes : S.gradient; signal(g, 1, s0 - .8, sn); signal(g, -1, s0 - .8, sn); }
@@ -820,7 +856,7 @@
      ========================================================= */
   const title = document.getElementById('walkTitle'), tag = document.getElementById('buzz'), endEl = document.getElementById('walkEnd'), passEl = document.getElementById('walkPass'), passRing = document.getElementById('passRing');
   const map = document.getElementById('walkMap');
-  map.innerHTML = ORGS.map((o, i) => `<button class="pin" data-i="${i}" style="left:${(o.door / (ZMAX + 4) * 100).toFixed(1)}%" aria-label="Walk to ${o.org}"><span>${o.org.split(' ')[0] === 'The' ? o.org.split(' ')[1] : o.org.split(' ')[0]}</span><i></i></button>`).join('') + '<span class="me" id="me"></span>';
+  map.innerHTML = ORGS.map((o, i) => `<button class="pin" data-i="${i}" style="left:${(o.door / (ZMAX + 4) * 100).toFixed(1)}%" aria-label="Walk to ${o.org}"><span>${o.pin}</span><i></i></button>`).join('') + '<span class="me" id="me"></span>';
   const me = document.getElementById('me'), seen = new Set();
   map.querySelectorAll('.pin').forEach(b => b.addEventListener('click', () => { if (mode !== 'walk') return; const i = +b.dataset.i; STOPS.forEach((st, k) => { st.passed = k < i; }); cam.target = STOPS[i].s; push = 0; }));
   let near = null, push = 0, pushT = 0, tagFor = null, glance = 0;
@@ -883,11 +919,31 @@
       enterSpeed = 0;
     }
     fade.style.opacity = 1; await wait(120);
-    const logo = o.logo ? `<img src="${o.logo}" alt="" onerror="this.parentNode.classList.add('none');this.remove()">` : '';
-    openModal(`<div class="wm-head"><div class="wm-logo${o.plate === 'dark' ? ' dark' : ''}${logo ? '' : ' none'}" style="--acc:${o.accent}">${logo}<span>${o.org.replace(/^The /, '').slice(0, 1)}</span></div><div><h2 id="wmOrg">${o.org}</h2><p>${o.role} · ${o.dates}</p></div></div>
-      <div class="wm-body">${(o.text || [o.blurb]).map(t => `<p>${t}</p>`).join('')}${o.details ? `<ul>${o.details.map(x => `<li>${x}</li>`).join('')}</ul>` : ''}</div>${EXIT}`);
+    openModal(expHTML(o.entries) + EXIT); wireTabs();
     seen.add(o.idx); map.querySelector(`.pin[data-i="${o.idx}"]`).classList.add('seen');
   }
+  const esc = t => String(t);
+  function logoHTML(e) { const img = e.logo ? `<img src="${e.logo}" alt="" onerror="this.parentNode.classList.add('none');this.remove()">` : ''; return `<div class="wm-logo${img ? '' : ' none'}" style="--acc:${e.accent}">${img}<span>${e.mono || e.org.replace(/^The /, '').slice(0, 1)}</span></div>`; }
+  function entryHTML(e) {
+    const L = e.labels || ['About the organisation', 'My role', 'Domains', 'Tech stack'];
+    const depth = e.depth.map(b => (b.h ? `<h4>${b.h}</h4>` : '') + (b.p ? `<p>${b.p}</p>` : '') + (b.ul ? `<ul>${b.ul.map(x => `<li>${x}</li>`).join('')}</ul>` : '')).join('');
+    return `<div class="wm-head">${logoHTML(e)}<div><h2 id="wmOrg">${e.org}</h2><p>${e.role}</p><p class="wm-meta">${e.dates} · ${e.place}</p></div></div>
+      <div class="wm-grid">
+        <section class="wm-c"><h3>${L[0]}</h3><p>${e.about}</p></section>
+        <section class="wm-c"><h3>${L[1]}</h3><p>${e.summary}</p></section>
+        <section class="wm-c"><h3>${L[2]}</h3><div class="wm-chips">${e.domains.map(d => `<span>${d}</span>`).join('')}</div></section>
+        <section class="wm-c"><h3>${L[3]}</h3><dl class="wm-stack">${e.stack.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl></section>
+      </div>
+      <div class="wm-depth"><h3>${e.kind === 'edu' ? 'In depth' : 'The role in depth'}</h3>${depth}</div>`;
+  }
+  function expHTML(list) {
+    const top = `<div class="wm-top"><a class="wm-tldr" href="${SITE.resume}" download><b>TL;DR</b> download résumé <i>↓</i></a></div>`;
+    if (list.length === 1) return top + `<div class="wm-pane" style="--acc:${list[0].accent}">${entryHTML(list[0])}</div>`;
+    const lbl = e => e.key === 'njms' ? 'NJ Medical School' : e.key === 'rutgers-ra' ? 'Statistics RA' : e.key === 'rutgers-ms' ? 'M.S. Statistics' : e.key === 'srm' ? 'B.Tech · SRM' : e.org;
+    return top + `<div class="wm-tabs" role="tablist">${list.map((e, i) => `<button role="tab" class="${i ? '' : 'on'}" data-i="${i}">${lbl(e)}<small>${e.dates}</small></button>`).join('')}</div>` +
+      list.map((e, i) => `<div class="wm-pane" style="--acc:${e.accent}" ${i ? 'hidden' : ''}>${entryHTML(e)}</div>`).join('');
+  }
+  function wireTabs() { const tb = card.querySelectorAll('.wm-tabs button'), panes = card.querySelectorAll('.wm-pane'); tb.forEach(b => b.addEventListener('click', () => { tb.forEach(x => x.classList.toggle('on', x === b)); panes.forEach((p, i) => p.hidden = i !== +b.dataset.i); card.scrollTop = 0; })); }
   function openModal(html) { card.innerHTML = html; modal.hidden = false; requestAnimationFrame(() => modal.classList.add('show')); mode = 'inside'; const x = document.getElementById('wmExit'); x.addEventListener('click', leave); x.focus(); }
   async function leave() {
     if (mode !== 'inside') return; mode = 'leaving';
@@ -903,7 +959,8 @@
   modal.addEventListener('click', e => { if (e.target === modal) leave(); });
   document.getElementById('walkList').addEventListener('click', () => {
     if (mode !== 'walk') return;
-    openModal(`<div class="wm-list"><h2 id="wmOrg" style="margin:0 0 6px">Work</h2>${ORGS.map(o => `<div class="wm-item"><h3>${o.org}</h3><p class="mono" style="font-size:12.5px;color:var(--muted)">${o.role} · ${o.dates}</p><p style="color:#cfd6e2">${(o.text || [o.blurb]).join(' ')}</p></div>`).join('')}</div>${EXIT}`);
+    openModal(`<div class="wm-top"><a class="wm-tldr" href="${SITE.resume}" download><b>TL;DR</b> download résumé <i>↓</i></a></div><div class="wm-list"><h2 id="wmOrg" style="margin:0 0 6px">Work &amp; education</h2>${EXP.map((e, i) => `<button class="wm-item" data-i="${i}"><h3>${e.org}</h3><p class="mono">${e.role} · ${e.dates}</p><p>${e.summary}</p><span class="wm-more">read more →</span></button>`).join('')}</div>${EXIT}`);
+    card.querySelectorAll('.wm-item').forEach(b => b.addEventListener('click', () => { const e = EXP[+b.dataset.i]; card.innerHTML = expHTML([e]) + `<button class="wm-back" type="button">← all entries</button>` + EXIT; card.scrollTop = 0; document.getElementById('wmExit').addEventListener('click', leave); card.querySelector('.wm-back').addEventListener('click', () => { mode = 'walk'; document.getElementById('walkList').click(); }); }));
   });
 
   if (gl) init().catch(err => { console.error(err); document.body.classList.add('no-gl'); });

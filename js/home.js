@@ -287,9 +287,9 @@
   const feat = document.getElementById('featured');
   S.featured.map(s => S.projects.find(p => p.slug === s)).forEach((p, i) => {
     const a = document.createElement('article');
-    a.className = `pcard reveal d${i + 1}`;
-    a.innerHTML = `<div class="viz"><canvas></canvas><span class="tag">live lab</span></div>
-      <div class="body"><h3>${p.title}</h3><p>${p.tagline}</p>
+    a.className = `pcard reveal d${i + 1}`; if (p.theme) a.dataset.theme = p.theme;
+    a.innerHTML = `<div class="viz"><canvas></canvas><span class="tag">${p.domain || 'live lab'}</span></div>
+      <div class="body"><h3>${p.title}</h3><p class="plain">${p.plain || p.tagline}</p>
       <div class="foot"><span class="yr">${p.year} · ${p.stack.slice(0, 2).join(' · ')}</span><a class="btn sm" href="project.html?p=${p.slug}">open project <span class="arr">→</span></a></div></div>`;
     feat.append(a); observeReveal(a);
     window.miniViz(p.slug, a.querySelector('canvas'));
@@ -302,7 +302,7 @@
   S.work.forEach((w, i) => {
     const n = document.createElement('div');
     n.className = 'tnode';
-    n.innerHTML = `<div class="above"><span class="dates">${w.dates}</span><span class="org">${w.org}</span><span class="role">${w.role}</span><div class="logo"><img src="${w.logo}" alt="${w.org} logo" loading="lazy"></div></div>
+    n.innerHTML = `<div class="above"><span class="dates">${w.dates}</span><span class="org">${w.org}</span><span class="role">${w.role}</span><div class="logo">${w.logo ? `<img src="${w.logo}" alt="${w.org} logo" loading="lazy">` : `<span class="mono-logo">${w.mono || w.org[0]}</span>`}</div></div>
       <span class="stem"></span><span class="dot" style="transition-delay:${0.3 + i * 0.35}s"></span><div class="below" style="transition-delay:${0.5 + i * 0.35}s">${w.blurb}</div>`;
     tl.append(n);
   });

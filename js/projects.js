@@ -100,9 +100,9 @@
   });
   S.projects.forEach((p, i) => {
     const a = document.createElement('article');
-    a.className = `pcard reveal d${(i % 3) + 1}`; a.dataset.cat = p.cat.join(' ');
-    a.innerHTML = `<div class="viz"><canvas></canvas><span class="tag">${p.cat.map(c => S.categories[c]).join(' · ')}</span></div>
-      <div class="body"><h3>${p.title}</h3><p>${p.tagline}</p>
+    a.className = `pcard reveal d${(i % 3) + 1}`; a.dataset.cat = p.cat.join(' '); if (p.theme) a.dataset.theme = p.theme;
+    a.innerHTML = `<div class="viz"><canvas></canvas><span class="tag">${p.domain || p.cat.map(c => S.categories[c]).join(' · ')}</span></div>
+      <div class="body"><h3>${p.title}</h3><p class="plain">${p.plain || p.tagline}</p><p class="tline">${p.tagline}</p>
       <div class="foot"><span class="yr">${p.year} · ${p.stack.slice(0, 2).join(' · ')}</span><a class="btn sm" href="project.html?p=${p.slug}">open lab <span class="arr">→</span></a></div></div>`;
     grid.append(a); observeReveal(a);
     miniViz(p.slug, a.querySelector('canvas'));

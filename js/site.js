@@ -7,6 +7,7 @@
     kaggle: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.83 23.86c-.02.09-.12.14-.28.14h-3.14a.6.6 0 0 1-.49-.25l-5.18-6.59-1.45 1.38v5.1c0 .24-.12.36-.35.36H5.5c-.23 0-.35-.12-.35-.36V.35c0-.23.12-.35.35-.35h2.44c.23 0 .35.12.35.35V14.7l6.2-6.28c.17-.16.33-.24.5-.24h3.24c.14 0 .23.06.28.18.05.15.04.26-.03.32l-6.56 6.34 6.84 8.5c.1.11.12.21.07.36"/></svg>',
     mail: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v.4l9 5.6 9-5.6V7H3zm18 2.7-8.47 5.27a1 1 0 0 1-1.06 0L3 9.7V17h18V9.7z"/></svg>',
   };
+  ICONS.cv = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l6 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V9h5.5L13 3.5zM8 13h8v1.6H8V13zm0 3.4h8V18H8v-1.6zM8 9.6h3v1.6H8V9.6z"/></svg>';
   window.ICONS = ICONS;
 
   const page = document.body.dataset.page || '';
@@ -15,16 +16,12 @@
   /* ---------- nav ---------- */
   const nav = document.createElement('nav');
   nav.className = 'nav';
+  const L = (href, key, label) => `<li><a href="${root}${href}" class="${page === key ? 'active' : ''}">${label}</a></li>`;
   nav.innerHTML = `
-    <a class="brand" href="${root}index.html" aria-label="Home"><img src="${root}assets/img/av-logo.png" alt=""><span>amaan<b>.</b>vora</span></a>
-    <button class="burger" aria-label="Menu"><i></i><i></i><i></i></button>
-    <ul>
-      <li><a href="${root}index.html" class="${page === 'home' ? 'active' : ''}">home</a></li>
-      <li><a href="${root}about.html" class="${page === 'about' ? 'active' : ''}">about</a></li>
-      <li><a href="${root}projects.html" class="${page === 'projects' ? 'active' : ''}">projects</a></li>
-      <li><a href="${root}work.html" class="${page === 'work' ? 'active' : ''}">work</a></li>
-      <li><a href="${S.links.mail}">contact</a></li>
-    </ul>`;
+    <ul class="nl">${L('about.html', 'about', 'about')}${L('projects.html', 'projects', 'projects')}</ul>
+    <a class="brand" href="${root}index.html" aria-label="Amaan Vora — home"><img src="${root}assets/img/av-logo.png" alt=""></a>
+    <ul class="nr">${L('work.html', 'work', 'work')}<li><a href="${root}${S.resume}" download class="cv">résumé</a></li></ul>
+    <button class="burger" aria-label="Menu"><i></i><i></i><i></i></button>`;
   document.body.prepend(nav);
   nav.querySelector('.burger').addEventListener('click', () => nav.classList.toggle('open'));
   nav.querySelectorAll('ul a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
@@ -46,7 +43,10 @@
   if (!document.body.dataset.nofooter) {
     const f = document.createElement('footer');
     f.className = 'footer';
-    f.innerHTML = `<div class="wrap"><div><div>© ${new Date().getFullYear()} Amaan Vora</div><div class="mono">hand-built · no frameworks · runs on your GPU's spare cycles</div></div><div class="socials">${socialsHTML()}</div></div>`;
+    const ic = (k, href, label, extra = '') => `<a href="${href}" aria-label="${label}" title="${label}" ${extra}>${ICONS[k]}</a>`;
+    f.innerHTML = `<div class="wrap"><p class="f-ask">Wanna learn more?</p>
+      <div class="f-icons">${ic('mail', S.links.mail, 'Email')}${ic('linkedin', S.links.linkedin, 'LinkedIn', 'target="_blank" rel="noopener"')}${ic('github', S.links.github, 'GitHub', 'target="_blank" rel="noopener"')}${ic('kaggle', S.links.kaggle, 'Kaggle', 'target="_blank" rel="noopener"')}${ic('cv', root + S.resume, 'Résumé (PDF)', 'download')}</div>
+      <p class="f-copy">© ${new Date().getFullYear()} Amaan Vora</p></div>`;
     document.body.append(f);
   }
 
