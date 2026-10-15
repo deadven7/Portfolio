@@ -145,7 +145,7 @@
     explain(html) {
       const t = document.createElement('template'); t.innerHTML = html; const keep = [], tech = [];
       [...t.content.children].forEach(el => { const lead = (el.querySelector('b') || {}).textContent || ''; (/^(What you|Try|Takeaway|How to read|Reading|Why|About the|What it shows|A caveat)/i.test(lead.trim()) ? keep : tech).push(el.outerHTML); });
-      return `<div class="explain">${keep.join('')}${tech.length ? `<details class="tech"><summary>how it works</summary>${tech.join('')}</details>` : ''}</div>`;
+      return `<div class="explain">${keep.join('')}${tech.length ? `<div class="tech">${tech.join('')}</div>` : ''}</div>`;
     },
     // placeholder that is filled once snippets.json arrives
     src(slug, keys, note = '') {

@@ -234,8 +234,8 @@
     a.className = `pcard reveal d${i + 1}`; if (p.theme) a.dataset.theme = p.theme;
     a.innerHTML = `<div class="viz"><canvas></canvas><span class="tag">${p.domain || 'live lab'}</span></div>
       <div class="body"><h3>${p.title}</h3><p class="plain">${p.plain || p.tagline}</p>
-      <div class="foot"><span class="yr">${p.year} · ${p.stack.slice(0, 2).join(' · ')}</span><a class="btn sm" href="project.html?p=${p.slug}">open project <span class="arr">→</span></a></div></div>`;
-    feat.append(a); observeReveal(a);
+      <div class="foot"><span class="yr">${p.year} · ${p.stack.slice(0, 2).join(' · ')}</span><a class="btn sm" href="project.html?p=${p.slug}#lab">open lab <span class="arr">→</span></a></div></div>`;
+    a.classList.add('linked'); a.addEventListener('click', e => { if (!e.target.closest('a')) location.href = `project.html?p=${p.slug}#lab`; }); feat.append(a); observeReveal(a);
     window.miniViz(p.slug, a.querySelector('canvas'));
   });
 

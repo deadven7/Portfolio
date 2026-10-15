@@ -773,3 +773,43 @@ body[data-theme="game"] .tabs button { color: #cdb894; }
 /* puzzle book */
 body[data-theme="puzzle"] { --skin-bg: #0c0d10; --skin-panel: #121317; --skin-line: #2a2d35; --skin-tex: linear-gradient(rgba(229,231,235,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(229,231,235,.03) 1px, transparent 1px); }
 body[data-theme="puzzle"] .lab { background-size: 30px 30px; }
+
+/* ---------- project pages: everything laid out, nothing behind menus ---------- */
+.metrics.m1 { grid-template-columns: 1fr; max-width: 360px; } .metrics.m2 { grid-template-columns: 1fr 1fr; max-width: 560px; }
+.lab-body .tabpane { display: block; }
+.lab-body .tabpane + .tabpane { margin-top: 44px; padding-top: 30px; border-top: 1px dashed var(--skin-line, var(--line-2)); }
+.ch-h { display: flex; align-items: baseline; gap: 12px; margin: 0 0 14px; font-family: var(--skin-font, var(--sans)); font-size: clamp(19px, 2vw, 23px); font-weight: 650; text-transform: capitalize; }
+.ch-h span { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.explain .tech { margin-top: 8px; padding-top: 8px; border-top: 1px dashed rgba(255,255,255,.08); }
+.explain .tech p { font-size: 13.5px; color: #9aa6b8; margin: 0 0 6px; }
+.lab .srcs, .lab .next-ch { display: none; }
+.pcard.linked { cursor: pointer; }
+
+/* ---------- whole-page domain themes: the page wears the same skin as its lab ---------- */
+body[data-theme][data-page="projects"] { background-color: var(--skin-bg, var(--bg)); background-image: var(--skin-tex, none); }
+body[data-theme] .pd-head { border-bottom-color: var(--skin-line, var(--line)); background: transparent; }
+body[data-theme] .pd-head h1 { font-family: var(--skin-font, var(--sans)); }
+body[data-theme] .metrics { background: var(--skin-line, var(--line)); border-color: var(--skin-line, var(--line)); }
+body[data-theme] .metrics div, body[data-theme] .p-story .ps { background: var(--skin-panel, var(--bg-2)); }
+body[data-theme] .p-story { border-color: var(--skin-line, var(--line)); }
+body[data-theme] .lab { background-color: transparent; background-image: none; border-color: var(--skin-line, var(--line-2)); }
+body[data-theme] .lab-bar { background: var(--skin-bar, #0a0e15); }
+body[data-theme="finance"] .lab, body[data-theme="realestate"] .lab, body[data-theme="world"] .lab, body[data-theme="search"] .lab, body[data-theme="puzzle"] .lab { background-size: auto; }
+body[data-theme="finance"][data-page="projects"] { background-size: 22px 22px; }
+body[data-theme="realestate"][data-page="projects"] { background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px; }
+body[data-theme="world"][data-page="projects"] { background-size: 14px 14px; }
+body[data-theme="search"][data-page="projects"] { background-size: 100% 4px; }
+body[data-theme="puzzle"][data-page="projects"] { background-size: 30px 30px; }
+/* games: the whole page is the table — felt, wood rails, serif type */
+body[data-theme="game"][data-page="projects"] { background: radial-gradient(1200px 900px at 50% 400px, #17402b, #0a1d13 70%); background-color: #0a1d13; }
+body[data-theme="game"] .pd-head { border-bottom: 10px solid #3b2a1e; box-shadow: inset 0 -2px 0 #6b4c33; }
+body[data-theme="game"] .pd-head h1 { color: #f3e7c9; }
+body[data-theme="game"] .lab { border: 8px solid #3b2a1e; border-radius: 10px; }
+/* TV game show (La Ghigliottina): studio stage — spotlights, gold, bold type */
+body[data-theme="show"][data-page="projects"] { background: radial-gradient(700px 520px at 18% -10%, rgba(255,181,71,.22), transparent 70%), radial-gradient(700px 520px at 82% -10%, rgba(255,107,139,.18), transparent 70%), linear-gradient(#120b1c, #0b0712 900px); background-color: #0b0712; }
+body[data-theme="show"] .pd-head h1 { font-weight: 800; letter-spacing: -.01em; background: linear-gradient(180deg, #ffe3a3, #ffb547); -webkit-background-clip: text; background-clip: text; color: transparent; }
+body[data-theme="show"] .pd-head { border-bottom: 2px solid transparent; border-image: repeating-linear-gradient(90deg, #ffb547 0 10px, transparent 10px 22px) 1; }
+body[data-theme="show"] .lab { border: 2px solid rgba(255,181,71,.45); box-shadow: 0 0 0 6px rgba(255,181,71,.06), 0 40px 120px -40px rgba(255,107,139,.35); }
+body[data-theme="puzzle"] .pd-head h1 { font-family: var(--mono); }
+/* clinical pages: calm, clean, rounded */
+body[data-theme="claims"] .pd-head h1, body[data-theme="publichealth"] .pd-head h1 { font-weight: 600; }

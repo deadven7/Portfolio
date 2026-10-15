@@ -85,6 +85,6 @@ DEMOS.tweetsearch = async function (root) {
   const resize = () => { const old = cache; cache = new LRU(+$('cs').value, +$('ct').value); cache.hits = old.hits; cache.miss = old.miss; $('csO').textContent = cache.size; $('ctO').textContent = cache.ttl; cacheView(); };
   $('cs').addEventListener('change', resize); $('ct').addEventListener('change', resize); $('cs').addEventListener('input', () => $('csO').textContent = $('cs').value); $('ct').addEventListener('input', () => $('ctO').textContent = $('ct').value);
   $('burst').addEventListener('click', () => { for (let i = 0; i < 40; i++) { const m = r() < .5 ? 'hashtag' : 'user'; run(m === 'hashtag' ? '#' + pick(TAGS) : '@' + pick(NAMES), m); } cacheView(); });
-  setInterval(() => { if (root.isConnected && root.querySelector('.tabpane.on #keys')) cacheView(); }, 1000);
+  setInterval(() => { if (root.isConnected && root.querySelector('#keys')) cacheView(); }, 1000);
   search();
 };

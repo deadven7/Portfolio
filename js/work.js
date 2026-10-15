@@ -609,14 +609,9 @@
     // the ghost sign on a side wall that pokes above its neighbour
     { const x = fx(1, 4), z0 = -35.98; g.quad([x, 30.2, z0], [x + 8.6, 30.2, z0], [x + 8.6, 25, z0], [x, 25, z0], [1, 1, 1], M(S.ghost), [[0, 0], [1, 0], [1, 1], [0, 1]], [0, 0, 1]); }
     for (const [side, s] of [[1, 4], [-1, 19], [1, 41], [-1, 67], [1, 69], [-1, 88], [1, 112], [-1, 113], [1, 139], [-1, 140], [1, 157], [-1, 158], [1, 183], [-1, 184]]) lamp(g, side, s);
-    for (const [side, s, sd] of [[1, 6, 1], [-1, 9, 2], [1, 46, 3], [-1, 70, 4], [-1, 89, 5], [1, 113.5, 6], [-1, 111, 7], [1, 159.5, 8], [-1, 171, 9]]) tree(g, side, s, sd);
-    for (const [x, s, col, cab] of [[3.6, 3, '#f2c230', 1], [-2.7, 8, '#1d2024'], [3.6, 33, '#c9ccd1'], [-2.7, 17, '#7d1d22'], [3.6, 46.5, '#2b3a55'], [-2.7, 42, '#f2c230', 1], [3.6, 66.5, '#16181b'], [-2.7, 62, '#8a8f96'], [3.6, 105, '#31443a'], [-2.7, 90, '#e9e6df'], [3.6, 115, '#f2c230', 1], [-2.7, 113, '#232a3a']]) car(g, x, s, 0, hex(col), cab);
-    hydrant(g, -1, 21); hydrant(g, 1, 122);
+    for (const [side, s, sd] of [[1, 6, 1], [-1, 9, 2], [1, 46, 3], [-1, 70, 4], [-1, 89, 5], [1, 113.5, 6], [-1, 111, 7], [1, 188, 8], [-1, 171, 9]]) tree(g, side, s, sd);
+    // no parked cars, hydrants, bikes, news boxes, bins or subway entrance: the walk and the walk-in to each door stay clear
     for (const [s0, s1, name] of CROSS) { const sn = name === 'Bayes St' ? S.bayes : S.gradient; signal(g, 1, s0 - .8, sn); signal(g, -1, s0 - .8, sn); }
-    bike(g, -7.3, 23.4); bike(g, -7.9, 24.6); g.box(-7.62, SWH, -24.2, -7.58, SWH + .85, -23.0, hex('#2a2d30'), M0);
-    subway(g, 1, 124.5);
-    newsbox(g, -1, 121, '#2f5fa8'); newsbox(g, -1, 121.6, '#c0342b'); newsbox(g, -1, 122.2, '#e3b63a');
-    bin(g, 1, 38); bin(g, -1, 92);
     skyline(g);
     return g;
   }
@@ -769,9 +764,7 @@
     P = prog(VS, FS); SP = prog(SVS, SFS); KP = prog(SKYVS, SKYFS);
     city = upload(buildCity());
     ORGS.forEach(o => { doors.push({ o, mesh: upload(doorGeo(o)), open: 0 }); });
-    const cg = new Geo(); car(cg, 0, 0, 0, hex('#f2c230'), 1); const cg2 = new Geo(); car(cg2, 0, 0, 0, hex('#2b2f36'), 0);
-    const cabMesh = upload(cg), sedanMesh = upload(cg2);
-    crossCars = [{ mesh: cabMesh, lane: 76.5, dir: 1, v: 9, off: 0 }, { mesh: sedanMesh, lane: 79.5, dir: 1, v: 7.5, off: 90 }, { mesh: sedanMesh, lane: 146.5, dir: -1, v: 8.5, off: 40 }, { mesh: cabMesh, lane: 149.5, dir: -1, v: 10, off: 140 }];
+    crossCars = []; // nothing crosses the walk path
     texArray(tiles, TS, TS, 0); texArray(signs, SW, SH, 1);
     SHS = SMALL ? 1024 : 2048;
     shadowTex = gl.createTexture(); gl.activeTexture(gl.TEXTURE2); gl.bindTexture(gl.TEXTURE_2D, shadowTex);
