@@ -24,9 +24,9 @@
   document.getElementById('labTitle').textContent = `~/${P.slug}/lab — ${P.year}`;
   const o = ORN[P.theme]; if (o) { const sp = document.createElement('span'); sp.className = 'orn'; sp.innerHTML = `<b>${o[0]}</b>${o[1]}`; document.querySelector('.lab-bar').append(sp); }
 
-  if (P.story) { const lab = document.getElementById('lab'), st = document.createElement('div'); st.className = 'p-story';
-    st.innerHTML = ['The question', 'The data', 'The approach', 'What it found'].map((k, i) => `<div class="ps"><span class="ps-n">${String(i + 1).padStart(2, '0')}</span><span class="ps-k">${k}</span><p>${P.story[i]}</p></div>`).join('');
-    lab.before(st); }
+  if (P.overview) { const lab = document.getElementById('lab'), ov = document.createElement('details'); ov.className = 'p-ov'; ov.open = true;
+    ov.innerHTML = `<summary>Project overview</summary><div class="ov-grid">${P.overview.map(([k, items]) => `<section><h3>${k}</h3><ul>${items.map(x => `<li>${x}</li>`).join('')}</ul></section>`).join('')}</div>`;
+    lab.before(ov); }
   document.getElementById('story').innerHTML = `
     <div><p class="eyebrow">the project</p><p class="lede tech" style="margin-top:0">${P.tagline}</p>${P.summary.map(s => `<p>${s}</p>`).join('')}<div class="chips" style="margin-top:14px">${P.stack.map(s => `<span class="chip">${s}</span>`).join('')}</div></div>
     <div><p class="eyebrow">pipeline</p><ol class="pipeline">${P.pipeline.map(s => `<li>${s}</li>`).join('')}</ol></div>`;

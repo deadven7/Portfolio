@@ -240,6 +240,7 @@ window.SITE = {
   projects: [
     {
       slug: 'stockbroker',
+      overview: [["Data", ["Daily open, high, low, close and volume for five large healthcare stocks, 2019–2022 (the live app pulls any ticker from Yahoo Finance)."]], ["Analysis", ["Technical features: RSI (14), MACD (12, 26, 9), Bollinger Bands, 20- and 50-day moving averages, rate of change and rolling volatility.", "Market regimes: K-Means (k = 3) groups days by returns, RSI and volume into trending, ranging and volatile periods."]], ["Prediction", ["Five-day price forecast from four methods — trend, mean reversion, Holt smoothing and momentum — combined into a weighted ensemble.", "Random forests predict next-day price, direction and return; trained on the first 80% of days and tested on the last 20%, in time order."]], ["Decisions", ["Portfolio weights that maximise the Sharpe ratio with a penalty on concentration; each stock held between 1% and 40%.", "A rule-based trader acts on agreeing buy and sell signals, with take-profit and stop-loss exits.", "Five stress scenarios (crash, rate rise and others) report return and 95% value-at-risk; an advisor layer scores all signals into one recommendation per stock."]], ["Built with", ["Python, pandas, scikit-learn, pmdarima, LightGBM, cvxpy; Plotly and Gradio app hosted on Hugging Face."]]],
       sections: [["Prices and signals", "Daily prices with common trading signals. The shading marks the market mood detected for each day."], ["Forecasts", "Four simple forecasting methods and their combined forecast for the next five days, with a likely range."], ["Machine-learning models", "Random forests trained on earlier days predict the next day, and are tested only on later days they have not seen."], ["Portfolio", "How to split money across the chosen stocks to balance return against risk."], ["Trading rules", "A rule-based trader buys and sells on the signals. Compare it with simply holding the stock."], ["Stress tests", "The same portfolio under five market shocks, such as a crash or a rate rise."], ["Summary", "All the signals combined into one recommendation per stock, with the reasons."]],
       story: ["Can an investing tool explain each suggestion it makes?", "Daily prices for five large healthcare stocks, 2019–2022.", "Compute market signals, sort days into market moods, forecast prices, choose a portfolio, then test it against a crash.", "Each step can be checked on its own, so every suggestion can be explained."],
       title: 'Professional Stockbroker Assistant',
@@ -261,6 +262,7 @@ window.SITE = {
     },
     {
       slug: 'claims',
+      overview: [["Data", ["Claim header (member, provider NPI, date of service, ICD-10 diagnoses) and service lines (CPT code, modifier, units, diagnosis pointer, charge).", "Payer policy documents, split into passages and stored for retrieval."]], ["Checks", ["Schema validation first: required fields, code formats and diagnosis pointers. Incomplete claims are returned before any rule runs.", "Deterministic edits: NCCI procedure-to-procedure (bundling) pairs, units-per-day limits and modifier requirements."]], ["Reasoning", ["For lines that need judgement, such as medical necessity, the relevant policy passages are retrieved by vector search and an LLM reasons over them.", "Rules run before the model, so every outcome can be traced to a rule or a cited passage."]], ["Output", ["An adjudication summary: each line paid or denied, the reason, the policy cited, and what to change to resubmit."]], ["Built with", ["Python, Pydantic schemas, vector retrieval, an LLM API."]]],
       story: ["Why was a medical claim denied, and can the reason be stated plainly?", "Insurance claims: billing codes, diagnoses and written policy.", "Fixed rules check each line first. An AI model reads the relevant policy only where judgement is needed.", "Each decision comes with its reason and the policy it relies on."],
       title: 'Healthcare Claims Review Agent', year: 2025, cat: ['health', 'language'],
       theme: 'claims', domain: 'Health insurance',
@@ -278,6 +280,7 @@ window.SITE = {
     },
     {
       slug: 'pdfintel',
+      overview: [["Input", ["Any PDF paper or report: text, tables, figures and metadata are extracted page by page."]], ["Processing", ["The text is split into sections using its headings.", "spaCy tags people, organisations, places and dates; a TF-IDF index makes the document searchable.", "Each section is summarised with BART or FLAN-T5, on CPU or GPU."]], ["Output", ["A section-by-section outline with summaries, entities, tables and figures, shown in a Gradio interface that streams progress.", "Everything runs locally; no document leaves the machine."]], ["Built with", ["Python, PyMuPDF, spaCy, scikit-learn (TF-IDF), Hugging Face Transformers (BART, FLAN-T5), Gradio."]]],
       story: ["What does a long report say, without reading all of it?", "PDF papers and reports.", "Split the document into sections, tag names and terms, index it for search and summarise each section.", "A searchable outline of a report in minutes, run locally."],
       title: 'PDF Intelligence System', year: 2025, cat: ['language'],
       theme: 'docs', domain: 'Document AI',
@@ -295,6 +298,7 @@ window.SITE = {
     },
     {
       slug: 'ghigliottina',
+      overview: [["The task", ["La Ghigliottina is the final game of an Italian TV quiz: five clue words, one hidden word linked to all of them."]], ["Data", ["About 39,000 clue–answer sets built from films, people, places, food, sport and other categories, plus WordNet relations."]], ["Models", ["Baseline: Word2Vec Skip-Gram (100 dimensions, window 5); candidates ranked by mean similarity to the clues.", "Sequence models: an LSTM (64 units) and fine-tuned T5 and BART that generate the answer from the five clues."]], ["Results", ["T5 and BART produced the most accurate links. The LSTM’s high reported accuracy came from padding, not real answers."]], ["Built with", ["Python, Gensim, TensorFlow, PyTorch, Hugging Face Transformers, NLTK."]]],
       sections: [["Play", "Five clues share one hidden word. Guess it before the computer does."], ["Ask the solver", "Type a few words to see which words the model thinks connect them."], ["Recorded results", "Results saved from the project’s other models."]],
       story: ["Can a computer solve a word game where five clues point to one hidden word?", "About 39,000 clue sets built from films, places, people, food and more.", "Train models that learn which words appear together, then ask for the word that links all five clues.", "The larger language models (T5 and BART) found the link most often."],
       title: 'Solving La Ghigliottina with NLP',
@@ -315,6 +319,7 @@ window.SITE = {
     },
     {
       slug: 'privacy',
+      overview: [["Data", ["Labeled Faces in the Wild (LFW), loaded with scikit-learn’s fetch_lfw_people."]], ["Differential privacy", ["Gaussian noise added to every pixel (noise factor 0.3), and DP-SGD during training: per-example gradients clipped to 1.0 with noise multiplier 0.8."]], ["Encrypted computation", ["Face features reduced with PCA to 100 values, then encrypted with CKKS homomorphic encryption (TenSEAL, polynomial degree 16384); the model scores them without decrypting."]], ["Comparison", ["A ResNet50 transfer-learning model without privacy serves as the baseline. The recorded curves show the accuracy given up for each protection."]], ["Built with", ["Python, TensorFlow, TensorFlow Privacy, TenSEAL, scikit-learn."]]],
       sections: [["Differential privacy", "Noise is added to the images and to training so no single photo can be recovered. Turn the noise up to see the cost."], ["Encrypted computation", "A server scores encrypted face data without ever decrypting it."], ["Recorded results", "Accuracy recorded for each approach."]],
       story: ["Can face recognition work without exposing the people in the training photos?", "Labeled Faces in the Wild, a public set of face photos.", "Add measured noise during training, and compute on encrypted face data.", "Privacy costs some accuracy; the lab shows how much."],
       title: 'Privacy-Preserving Facial Recognition',
@@ -335,6 +340,7 @@ window.SITE = {
     },
     {
       slug: 'optimizers',
+      overview: [["Data", ["MNIST: 60,000 training and 10,000 test images of handwritten digits, normalised."]], ["Experiment", ["One LeNet-style CNN (two convolutional layers, two dense layers), the same seed and data order, trained for 10 epochs with batch size 64 and learning rate 0.01.", "Only the optimizer changes: SGD with momentum 0.5, AdaGrad, RMSprop."]], ["Results", ["Test accuracy: AdaGrad 99.10%, SGD 98.89%, RMSprop 94.78%. AdaGrad converged fastest; RMSprop was unstable at this learning rate."]], ["Built with", ["Python, PyTorch, matplotlib."]]],
       sections: [["Recorded training runs", "Loss and accuracy recorded while training the same network with three different optimizers."], ["Race on a landscape", "The three optimizers searching for the lowest point of a surface. Pick a surface and compare their paths."], ["Train a small network", "A small network trained live three times, once with each optimizer."]],
       story: ["Does the training method change how well a neural network learns?", "MNIST: 70,000 handwritten digits.", "Train the same network three times, changing only the optimizer.", "AdaGrad learned fastest and reached 99.1% accuracy."],
       title: 'The Role of Optimizers in Neural Networks',
@@ -355,6 +361,7 @@ window.SITE = {
     },
     {
       slug: 'recommender',
+      overview: [["Data", ["Netflix catalogue: 7,787 titles with director, cast, genres and description.", "US college data: 777 colleges with applications, acceptances, enrolment, tuition, graduation rate and more."]], ["Netflix", ["Text fields combined, cleaned (non-ASCII, stopwords, punctuation removed) and vectorised with CountVectorizer; cosine similarity returns the ten closest titles.", "TF-IDF vectors clustered with K-Means; the elbow method chose k = 5. A NetworkX graph links titles through shared cast, directors and genres."]], ["Colleges", ["Five ratio features added (for example acceptance rate), all standardised, then grouped with K-Means and Ward hierarchical clustering."]], ["Built with", ["Python, pandas, scikit-learn, NLTK, NetworkX."]]],
       sections: [["Netflix recommendations", "Pick a title to see the ten most similar titles, based on director, cast, genre and description."], ["Similarity graph", "Titles linked through shared actors, directors and genres."], ["Netflix clusters", "The catalogue grouped into five clusters, with the words that define each."], ["College clusters", "777 US colleges grouped by admissions, cost and outcomes."]],
       story: ["Can one pipeline group and recommend very different things?", "7,787 Netflix titles and 777 US colleges.", "Turn each item into numbers, measure similarity, and form clusters.", "The same code recommends films and groups colleges."],
       title: 'Generic Clustering & Recommender System',
@@ -375,6 +382,7 @@ window.SITE = {
     },
     {
       slug: 'snp500',
+      overview: [["Data", ["Daily prices for S&P 500 constituents from 2019 to 2022, grouped into 11 sectors."]], ["Analysis", ["Each stock min-max normalised and averaged within its sector, so sectors share one scale.", "Sector curves compared against major world events, such as the COVID-19 crash and the war in Ukraine."]], ["Forecast", ["Pfizer’s 946 daily closes: an Augmented Dickey–Fuller test showed the series needed differencing; auto.arima selected ARIMA(1,1,0) by AIC.", "A Ljung–Box test confirmed the residuals were white noise; a five-day forecast with a 95% interval."]], ["Built with", ["R, tidyverse, ggplot2, forecast, tseries."]]],
       sections: [["Pfizer forecast", "A statistical model forecasts Pfizer’s next five closing prices, with checks that the model fits."], ["Pfizer, explored", "Pfizer’s prices by year and month, and its daily changes."], ["Sectors and events", "All 11 sectors on one scale, with major world events marked."]],
       story: ["How did major events move different parts of the stock market?", "Daily prices for S&P 500 companies, 2019–2022, in 11 sectors.", "Scale every stock the same way, average by sector, compare with events, then forecast Pfizer.", "Healthcare held up through the pandemic; energy moved with geopolitics."],
       title: 'S&P 500: Sector Shocks & Forecasting',
@@ -395,6 +403,7 @@ window.SITE = {
     },
     {
       slug: 'attrition',
+      overview: [["Data", ["10,127 credit-card customers: demographics, products held, months inactive, contacts with the bank, credit limit, balances and transaction activity. About 16% left."]], ["Analysis", ["Attrition rates compared across contacts, inactivity, products and dependents.", "Five predictors removed because they were highly correlated with others."]], ["Models", ["Logistic regression on a 75/25 split with a 0.2 decision threshold, to catch more leavers.", "Ridge and lasso logistic regression with 10-fold cross-validation on 14 numeric predictors."]], ["Results", ["Ridge and lasso both reached an AUC of 0.924; lasso dropped one predictor entirely. The plain model caught 76.1% of leavers.", "Strongest signals: fewer transactions, a falling transaction count, more months inactive and more contacts with the bank."]], ["Built with", ["R, glmnet, caret, pROC, ggplot2."]]],
       sections: [["Compare the models", "Three models predicting which customers leave. Move the threshold to trade missed leavers against false alarms."], ["Score a customer", "Edit a customer’s profile to see how likely they are to leave, and why."], ["What drives attrition", "How leaving relates to contact with the bank, inactivity and products held."]],
       story: ["Which credit-card customers are likely to leave?", "10,127 bank customers and their account activity.", "Compare three versions of logistic regression.", "All three perform about the same. Fewer transactions and more inactive months are the clearest signs."],
       title: 'Credit Card Attrition: Logistic vs Ridge vs Lasso',
@@ -415,6 +424,7 @@ window.SITE = {
     },
     {
       slug: 'tweetsearch',
+      overview: [["Data", ["A 2020 collection of tweets in JSON: user profiles, tweet text, hashtags, retweets and quotes."]], ["Storage", ["User records in PostgreSQL (structured, with indexes and partitions); tweet documents in MongoDB (flexible, nested)."]], ["Search", ["Search by hashtag, user or keyword within a time range; results ranked by engagement: 30% replies, 30% quotes, 20% likes, 20% retweets, then followers.", "Dashboards for the most popular users, hashtags and most engaging tweets."]], ["Caching", ["An LRU cache of 1,000 items with a one-hour time-to-live; repeated queries skip the databases."]], ["Built with", ["Python, PostgreSQL, MongoDB, Flask."]]],
       story: ["How do you search a large set of tweets quickly?", "Tweets and user profiles from a 2020 collection.", "Store each kind of data in a suitable database, add indexes, rank by engagement and cache frequent searches.", "Indexes and caching make repeated searches near-instant."],
       title: 'Twitter Search Engine', year: 2023, cat: ['language'],
       theme: 'search', domain: 'Data engineering',
@@ -432,6 +442,7 @@ window.SITE = {
     },
     {
       slug: 'research',
+      overview: [["Data", ["About 250,000 research paper abstracts across scientific fields."]], ["Method", ["Each abstract encoded with SciBERT, a language model trained on scientific text.", "Topics found with BERTopic: dimensionality reduction, density-based clustering, and class-based TF-IDF to name each topic.", "t-SNE projects the papers to two dimensions for a map of the field."]], ["Results", ["More than 50 coherent topics, validated by domain experts.", "Published at the International Conference on IoT, Cloud and Data Science (IRCICD 2022) and given the Best Paper award."]], ["Built with", ["Python, Hugging Face Transformers (SciBERT), BERTopic, UMAP, HDBSCAN, scikit-learn."]]],
       story: ["Can research papers be grouped by meaning rather than by keywords?", "250,000 research paper abstracts.", "Represent each abstract with a science language model, cluster them, and label each cluster with its key words.", "Over 50 clear topics, checked by experts. Best Paper at IRCICD 2022."],
       title: 'Clustering Scientific Research', year: 2022, cat: ['language'],
       theme: 'research', domain: 'Research mapping',
@@ -449,6 +460,7 @@ window.SITE = {
     },
     {
       slug: 'titanic',
+      overview: [["Data", ["891 passengers from the Kaggle training set: class, sex, age, siblings or spouses, parents or children, fare, port and survival."]], ["Preparation", ["Missing ages filled by passenger title; titles extracted from names; family size and fare bands added; categories encoded."]], ["Models", ["Nine classifiers compared, including logistic regression, KNN, SVM, decision tree and random forest. The lab scores models on held-out passengers."]], ["Results", ["74% of women and 19% of men survived; 63% in first class against 24% in third."]], ["Built with", ["Python, pandas, scikit-learn, seaborn."]]],
       story: ["Who survived the Titanic, and why?", "The passenger list: 891 passengers.", "Fill in missing values, then train models to predict survival.", "Sex and class mattered most."],
       title: 'Titanic Survival Analysis', year: 2021, cat: ['society'],
       theme: 'maritime', domain: 'Historical data',
@@ -466,6 +478,7 @@ window.SITE = {
     },
     {
       slug: 'housing',
+      overview: [["Data", ["1,460 home sales in Ames, Iowa (Kaggle), each with 79 features describing size, quality, age, location and condition."]], ["Preparation", ["Mostly empty columns dropped, remaining gaps filled, categories encoded."]], ["Models", ["Decision tree, random forest and KNN regressors compared. The lab trains a random forest and reports error in dollars on unseen homes."]], ["Results", ["Overall quality (correlation 0.79) and living area (0.71) are the strongest drivers of price."]], ["Built with", ["Python, pandas, scikit-learn."]]],
       story: ["What is a house worth?", "1,460 home sales in Ames, Iowa.", "Clean the data and train models to predict price.", "Quality and living area matter most."],
       title: 'House Price Estimator', year: 2021, cat: ['society'],
       theme: 'realestate', domain: 'Real estate',
@@ -483,6 +496,7 @@ window.SITE = {
     },
     {
       slug: 'mobile',
+      overview: [["Data", ["2,000 phones with 20 specifications (RAM, battery, screen resolution, cameras, processor and more) and a price tier from 0 to 3."]], ["Preparation", ["Features scaled and binned; distributions checked for each tier."]], ["Models", ["Seven classifiers compared: perceptron, SGD, Naive Bayes, SVC, KNN, decision tree and random forest."]], ["Results", ["RAM is by far the strongest predictor (correlation 0.92 with tier); battery is next at 0.20."]], ["Built with", ["Python, pandas, scikit-learn."]]],
       story: ["Can a phone's price range be predicted from its specs?", "2,000 phones with 20 specs each.", "Scale the specs and compare seven models.", "RAM is the strongest predictor."],
       title: 'Mobile Price Classifier', year: 2021, cat: ['society'],
       theme: 'device', domain: 'Consumer tech',
@@ -500,6 +514,7 @@ window.SITE = {
     },
     {
       slug: 'ipl',
+      overview: [["Data", ["Two tables: 816 matches (venue, toss, result, margin) and 193,468 ball-by-ball deliveries, 2008–2020."]], ["Analysis", ["Scoring by over and season, toss decisions and their effect, result margins, and venue patterns.", "Batter ratings from runs, average and strike rate; bowler ratings from wickets, economy and strike rate."]], ["Results", ["Mumbai Indians won five titles. Runs per over in the last five overs rose from 7.8 in 2008 to 9.2 in 2020.", "A best XI selected from the player ratings."]], ["Built with", ["Python, pandas, matplotlib, seaborn."]]],
       story: ["What wins IPL matches, and who makes the best team?", "Every ball bowled in the IPL, 2008–2020.", "Summarise the data by season, team and player, then rate batters and bowlers.", "Scoring in the last overs has risen; the best XI balances speed and consistency."],
       title: 'IPL Analytics 2008–2020', year: 2021, cat: ['society'],
       theme: 'sports', domain: 'Cricket analytics',
@@ -517,6 +532,7 @@ window.SITE = {
     },
     {
       slug: 'covid',
+      overview: [["Data", ["Daily cases, deaths and the Oxford Stringency Index for 210 countries (December 2019 – October 2020), with population, GDP per capita and Human Development Index."]], ["Analysis", ["Per-country totals, death rate and infection rate; relationships between outcomes, wealth, development and lockdown strictness."]], ["Score", ["Survival score = HDI + GDP share + stringency − death rate, used to rank countries.", "Stringency is on a 0–100 scale and HDI on 0–1, so stringency dominates; the lab lets you rebalance the ingredients."]], ["Built with", ["Python, pandas, Plotly."]]],
       story: ["Which countries were best placed to handle COVID-19?", "Cases, deaths and lockdown data for 210 countries, with development and income data.", "Combine these into one score per country.", "The original score depends mostly on lockdown strictness."],
       title: 'COVID-19: Economy and Survival', year: 2021, cat: ['health', 'society'],
       theme: 'world', domain: 'Global economics',
@@ -534,6 +550,7 @@ window.SITE = {
     },
     {
       slug: 'suiciderates',
+      overview: [["Data", ["WHO-derived records for 101 countries, 1985–2016: suicides and population by sex, age group and generation, with GDP per capita."]], ["Analysis", ["Rates per 100,000 recomputed from totals; trends by country, sex, age group and generation; comparison with income."]], ["Results", ["Men’s rates are about 3.5 times women’s; rates rise with age; the overall rate fell from 15.3 (1995) to 11.5 (2015) per 100,000."]], ["Built with", ["Python, pandas, seaborn."]]],
       story: ["Who is most at risk, and where are rates falling?", "Data for 101 countries, 1985–2016, by age and sex.", "Recompute rates per 100,000 and compare groups.", "Men's rates are about 3.5 times women's, risk rises with age, and the overall rate has fallen since 1995."],
       title: 'Global Suicide Rate Trends, 1985–2016', year: 2021, cat: ['health', 'society'],
       theme: 'publichealth', domain: 'Public health',
@@ -551,6 +568,7 @@ window.SITE = {
     },
     {
       slug: 'tweets',
+      overview: [["Data", ["Tweets collected through the Twitter API by search phrase."]], ["Sentiment", ["Each tweet scored with VADER (positive, negative, neutral, compound) and labelled positive if pos > neg, negative if neg > pos, otherwise neutral; TextBlob polarity recorded alongside."]], ["Text analysis", ["Cleaning: URLs, HTML, emoji, mentions, contractions and punctuation removed; tokenised, stopwords removed and stemmed.", "Most frequent words and two-, three- and four-word phrases counted."]], ["Built with", ["Python, Tweepy, NLTK, TextBlob, scikit-learn, Plotly."]]],
       story: ["Is talk about a topic positive or negative?", "Tweets collected by search phrase.", "Score each tweet's sentiment, then clean the text and count common words.", "A quick read of mood on a topic."],
       title: 'Twitter Sentiment and Phrase Prediction', year: 2021, cat: ['language'],
       theme: 'social', domain: 'Social listening',
@@ -568,6 +586,7 @@ window.SITE = {
     },
     {
       slug: 'chatbot',
+      overview: [["Data", ["An intents file: each intent has example questions and possible replies (greetings, opening hours, what the shop sells and more)."]], ["Model", ["Messages tokenised and stemmed, then turned into bag-of-words vectors.", "A neural network with two hidden layers of 8 units and a softmax output, trained for 1,000 epochs."]], ["Behaviour", ["Replies only when the top intent scores above 70% confidence; otherwise asks the user to rephrase."]], ["Built with", ["Python, NLTK, TensorFlow, TFLearn."]]],
       story: ["Can a small model tell what a customer is asking?", "A list of example questions and answers.", "Turn messages into word counts and train a small neural network.", "A simple help-desk assistant that can be retrained quickly."],
       title: 'Support Chatbot', year: 2021, cat: ['language', 'dl'],
       theme: 'chat', domain: 'Conversational AI',
@@ -585,6 +604,7 @@ window.SITE = {
     },
     {
       slug: 'checkers',
+      overview: [["Game", ["Full checkers rules: diagonal moves, captures, multi-jumps and kings."]], ["Search", ["Minimax looks ahead a set number of moves and assumes the opponent always replies with their best move.", "Positions scored as white pieces − red pieces + 0.5 × (white kings − red kings)."]], ["Behaviour", ["More look-ahead plays stronger but examines many more positions."]], ["Built with", ["Python, Pygame."]]],
       story: ["How does a computer choose a move?", "The rules of checkers.", "Look several moves ahead and pick the move with the best worst case (minimax).", "Deeper search plays better but takes longer."],
       title: 'Checkers AI', year: 2021, cat: ['games'],
       theme: 'game', domain: 'Game AI',
@@ -602,6 +622,7 @@ window.SITE = {
     },
     {
       slug: 'sudoku',
+      overview: [["Puzzles", ["Generated from a valid base pattern with shuffled rows, columns and digits, then cells removed."]], ["Solver", ["Recursive backtracking: find the first empty cell, try digits 1–9, keep the first that fits its row, column and box, and undo when stuck."]], ["Built with", ["Python, Pygame."]]],
       story: ["How does a computer solve a Sudoku?", "Any valid puzzle.", "Place a digit that fits; undo it when stuck (backtracking).", "It solves any valid puzzle."],
       title: 'Sudoku Solver', year: 2021, cat: ['games'],
       theme: 'puzzle', domain: 'Game AI',
