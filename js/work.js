@@ -78,7 +78,8 @@
   function sign(aspect, draw) { const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const x = c.getContext('2d'), lw = 256 * aspect; x.save(); x.scale(1024 / lw, 1); draw(x, lw, 256); x.restore(); if (SW !== 1024) { const d = document.createElement('canvas'); d.width = SW; d.height = SH; d.getContext('2d').drawImage(c, 0, 0, SW, SH); signs.push(d); } else signs.push(c); return 100 + signs.length - 1; }
   function fit(x, text, font, maxW, size) { let s = size; x.font = font.replace('#', s); while (x.measureText(text).width > maxW && s > 8) { s -= 2; x.font = font.replace('#', s); } return s; }
   function txt(x, text, font, size, col, X, Y, maxW, ls = 0) { if ('letterSpacing' in x) x.letterSpacing = ls + 'px'; fit(x, text, font, maxW, size); x.fillStyle = col; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, X, Y); if ('letterSpacing' in x) x.letterSpacing = '0px'; }
-  let S = {};
+  let S = {}, VLOGO = null;
+  const loadImg = src => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.onerror = () => r(null); i.src = src; });
   function makeSigns() {
     S.kaiser = sign(12, (x, W, H) => { x.fillStyle = '#f2f0ea'; x.fillRect(0, 0, W, H); txt(x, 'KAISER PHARMACEUTICALS', '700 #px Inter, sans-serif', 150, '#1d7a50', W / 2, H * .54, W * .94, 18); });
     S.siemens = sign(4.5, (x, W, H) => { x.fillStyle = '#0b161b'; x.fillRect(0, 0, W, H); x.shadowColor = '#5ff0f4'; x.shadowBlur = 18; txt(x, 'SIEMENS', '800 #px Inter, sans-serif', 190, '#41d0d4', W / 2, H * .55, W * .9, 10); });
@@ -87,7 +88,7 @@
     S.ticker = sign(16, (x, W, H) => { x.fillStyle = '#0c0805'; x.fillRect(0, 0, W, H); const m = 'BLACK HOLES: STILL UP AT 2 A.M.   •   KNIGHT TO F6, SIX MOVES AHEAD   •   ';
       x.font = '700 120px JetBrains Mono, monospace'; const w = x.measureText(m).width, k = W / w; x.save(); x.scale(k, 1); x.fillStyle = '#ffb547'; x.shadowColor = '#ff9a1f'; x.shadowBlur = 14; x.textBaseline = 'middle'; x.fillText(m, 0, H * .54); x.restore();
       x.fillStyle = 'rgba(12,8,5,.55)'; for (let i = 0; i < H; i += 8) x.fillRect(0, i, W, 3); });
-    S.virtua = sign(7, (x, W, H) => { x.fillStyle = '#f7f9fb'; x.fillRect(0, 0, W, H); x.fillStyle = '#2a7de1'; const cx = H * .62, cy = H / 2, a = H * .13, b = H * .36; x.fillRect(cx - a, cy - b, a * 2, b * 2); x.fillRect(cx - b, cy - a, b * 2, a * 2); txt(x, 'VIRTUA HEALTH', '700 #px Inter, sans-serif', 140, '#173a63', W / 2 + H * .45, H * .55, W - H * 1.6, 14); });
+    S.virtua = sign(7, (x, W, H) => { x.fillStyle = '#ffffff'; x.fillRect(0, 0, W, H); if (VLOGO) { const k = Math.min((W * .9) / 531.8, (H * .62) / 67.9), w = 531.8 * k, h = 67.9 * k; x.drawImage(VLOGO, (W - w) / 2, (H - h) / 2, w, h); } else txt(x, 'VIRTUA HEALTH', '700 #px Inter, sans-serif', 140, '#215474', W / 2, H * .55, W * .9, 14); });
     S.newsroom = sign(10, (x, W, H) => { x.fillStyle = '#15120d'; x.fillRect(0, 0, W, H); txt(x, 'NEWSROOM  ·  EST. 1869', '600 #px JetBrains Mono, monospace', 120, '#e9c46a', W / 2, H * .55, W * .86, 8); });
     S.marquee = sign(6.5, (x, W, H) => { x.fillStyle = '#1a0709'; x.fillRect(0, 0, W, H); x.fillStyle = '#f6e7c0'; for (let i = 18; i < W; i += 30) for (const y of [16, H - 16]) { x.beginPath(); x.arc(i, y, 7, 0, 7); x.fill(); }
       txt(x, 'NOW SHOWING', '600 #px Cinzel, Georgia, serif', 46, '#e9c46a', W / 2, H * .3, W * .6, 12); txt(x, 'WHO I AM', '700 #px Cinzel, Georgia, serif', 112, '#fff4dc', W / 2, H * .64, W * .8, 26); });
@@ -115,6 +116,7 @@
       const hA = ((now.getHours() % 12) + now.getMinutes() / 60) / 12 * Math.PI * 2, mA = now.getMinutes() / 60 * Math.PI * 2;
       x.lineWidth = 12; x.beginPath(); x.moveTo(W / 2, H / 2); x.lineTo(W / 2 + Math.sin(hA) * H * .22, H / 2 - Math.cos(hA) * H * .22); x.stroke(); x.lineWidth = 7; x.beginPath(); x.moveTo(W / 2, H / 2); x.lineTo(W / 2 + Math.sin(mA) * H * .34, H / 2 - Math.cos(mA) * H * .34); x.stroke(); });
     ORGS.forEach(o => { o.plaque = sign(1.6, (x, W, H) => { const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#c9a35a'); g.addColorStop(.5, '#f0d48e'); g.addColorStop(1, '#9c7a3a'); x.fillStyle = g; x.fillRect(0, 0, W, H); x.strokeStyle = '#6e5222'; x.lineWidth = 6; x.strokeRect(12, 12, W - 24, H - 24);
+      if (o.pin === 'Virtua' && VLOGO) { x.fillStyle = '#fff'; x.fillRect(26, 26, W - 52, H - 52); const k = (W - 90) / 531.8; x.drawImage(VLOGO, 45, H / 2 - 67.9 * k / 2, 531.8 * k, 67.9 * k); return; }
       const parts = o.plaqueText.split(' '), a = parts.slice(0, Math.ceil(parts.length / 2)).join(' '), b = parts.slice(Math.ceil(parts.length / 2)).join(' '); txt(x, a, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .38, W * .84); txt(x, b, '700 #px Georgia, serif', 54, '#3d2c10', W / 2, H * .64, W * .84); }); });
   }
 
@@ -760,6 +762,7 @@
   async function init() {
     if (!gl) return;
     try { await Promise.race([Promise.all(['700 40px Inter', '600 40px "JetBrains Mono"', '700 40px Cinzel', '40px UnifrakturMaguntia', '40px Bangers'].map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 2500))]); } catch (e) { /* fall back to system fonts */ }
+    VLOGO = await Promise.race([loadImg('assets/logos/virtua.svg'), new Promise(r => setTimeout(() => r(null), 2500))]);
     makeSigns();
     P = prog(VS, FS); SP = prog(SVS, SFS); KP = prog(SKYVS, SKYFS);
     city = upload(buildCity());

@@ -21,12 +21,12 @@ window.SITE = {
 
   /* Horizontal timeline on the home page (oldest → newest) */
   work: [
-    { org: 'Kaiser Exports', role: 'Freelance Web Developer', dates: 'Sep – Dec 2020', logo: 'assets/logos/kaiser.png', blurb: 'Designed and built two product-catalogue sites for a pharmaceutical export and packaging business.' },
-    { org: 'Siemens', role: 'GBS Intern · ML Team', dates: 'Jun – Aug 2021', logo: 'assets/logos/siemens.png', blurb: 'Clustered customer comments in 14 languages with Sentence-BERT and HDBSCAN (87% accuracy); automated bulk DLL registration.' },
-    { org: 'Rutgers University', role: 'AI/ML Graduate Research Assistant', dates: 'Jan – Jul 2023', logo: 'assets/logos/rutgers.png', blurb: 'Standardised the department’s ML pipelines (runtime −35%); propensity-score matching cut RMSE 15% over regression.' },
-    { org: 'The Daily Targum', role: 'Lead Developer', dates: 'Aug 2023 – May 2024', logo: 'assets/logos/targum.png', blurb: 'Engagement forecasting (+20% engagement), a semantic recommender over 50K articles, and RoBERTa auto-tagging.' },
-    { org: 'Rutgers NJ Medical School', role: 'ML Research Engineer', dates: 'Oct 2024 – Dec 2025', logo: 'assets/logos/rutgers.png', blurb: 'Graph neural networks for drug discovery (+14% ROC-AUC) and an LLM literature pipeline over 10,000+ papers.' },
-    { org: 'Virtua Health', role: 'Data Scientist', dates: 'Jan 2026 – present', logo: 'https://www.virtua.org/-/media/Project/Virtua-Tenant/Virtua/Shared/Common/Virtua_Health_Horiz.svg?iar=0&hash=55C7DEDED0E89E3E40E98427C2C78F42', mono: 'V', blurb: 'Clinical prediction models, clinical NLP pipelines and GPT-4o assistants built on Epic data.' },
+    { org: 'Kaiser Exports', role: 'Freelance Web Developer', dates: 'Sep – Dec 2020', logo: 'assets/logos/kaiser.png', orgLine: 'A pharmaceutical exporter serving markets in Africa and South America.', roleLine: 'Built two websites for the business.' },
+    { org: 'Siemens', role: 'GBS Intern · ML Team', dates: 'Jun – Aug 2021', logo: 'assets/logos/siemens.png', orgLine: 'A global technology company; I was with its services arm in India.', roleLine: 'Clustered customer comments in 14 languages; automated file registration.' },
+    { org: 'Rutgers University', role: 'AI/ML Graduate Research Assistant', dates: 'Jan – Jul 2023', logo: 'assets/logos/rutgers.png', orgLine: 'A public research university; I worked in the Department of Statistics.', roleLine: 'Standardised model-training workflows; applied causal inference in research.' },
+    { org: 'The Daily Targum', role: 'Lead Developer', dates: 'Aug 2023 – May 2024', logo: 'assets/logos/targum.png', orgLine: 'Rutgers University’s student newspaper, founded in 1869.', roleLine: 'Led website development and built models and dashboards for the editorial board.' },
+    { org: 'Rutgers NJ Medical School', role: 'ML Research Engineer', dates: 'Oct 2024 – Dec 2025', logo: 'assets/logos/rutgers.png', orgLine: 'Rutgers’ medical school in Newark; a drug-discovery research group.', roleLine: 'Built molecular property models and literature-search tools.' },
+    { org: 'Virtua Health', role: 'Data Scientist', dates: 'Jan 2026 – present', logo: 'assets/logos/virtua.svg', plate: 'light', mono: 'V', orgLine: 'A nonprofit health system in southern New Jersey.', roleLine: 'Build clinical prediction models and language pipelines on Epic data.' },
   ],
 
   /* Work page — newest first. Each entry: 4 cards + the role in depth. */
@@ -35,7 +35,7 @@ window.SITE = {
     {
       key: 'virtua', kind: 'work',
       org: 'Virtua Health', role: 'Data Scientist', dates: 'Jan 2026 – present', place: 'Marlton, NJ',
-      logo: 'https://www.virtua.org/-/media/Project/Virtua-Tenant/Virtua/Shared/Common/Virtua_Health_Horiz.svg?iar=0&hash=55C7DEDED0E89E3E40E98427C2C78F42', plate: 'light', mono: 'V', accent: '#2a7de1',
+      logo: 'assets/logos/virtua.svg', plate: 'light', mono: 'V', accent: '#2a7de1',
       about: 'Virtua Health is a nonprofit health system in southern New Jersey. Its clinical data lives in Epic.',
       summary: 'I build clinical prediction models, language pipelines over clinical notes and documentation, and retrieval-based assistants for staff, working from Epic Clarity data through to results presented to physicians and leadership.',
       domains: ['Clinical prediction', 'Medical imaging', 'Clinical NLP', 'Generative AI and retrieval', 'Data engineering', 'Model evaluation and interpretability'],
