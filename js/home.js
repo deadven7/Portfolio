@@ -199,86 +199,34 @@
     drawCursor(ctx);
   });
 
-  /* ---------- typing ---------- */
-  const term = document.getElementById('termLines');
+  /* ---------- typing: the headline only ---------- */
   const head = document.getElementById('headline');
-  const sub = document.getElementById('heroSub');
-  sub.textContent = S.hero.sub;
   const sleep = ms => new Promise(r => setTimeout(r, reducedMotion ? 0 : ms));
   async function typeInto(el, text, speed = 55) {
-    for (const ch of text) { el.textContent += ch; await sleep(speed + Math.random() * speed * 0.8); intensity = Math.min(1, intensity + 0.012); }
+    for (const ch of text) { el.textContent += ch; await sleep(speed + Math.random() * speed * 0.8); intensity = Math.min(1, intensity + 0.03); }
   }
   async function run() {
-    await sleep(500);
-    const lines = [
-      [S.hero.prelude[0], 'amaan vora · data scientist / ml engineer · new jersey'],
-      [S.hero.prelude[1], null],
-    ];
-    for (const [cmd, out] of lines) {
-      const ln = document.createElement('div'); ln.className = 'ln';
-      ln.innerHTML = '<span class="p">❯ </span><span class="cmd"></span><span class="caret"></span>';
-      term.append(ln);
-      await typeInto(ln.querySelector('.cmd'), cmd, 45);
-      await sleep(280);
-      ln.querySelector('.caret').remove();
-      if (out) { const o = document.createElement('div'); o.className = 'ln out'; o.textContent = out; term.append(o); await sleep(350); }
-    }
+    await sleep(600);
     const l1 = document.createElement('span'), br = document.createElement('br'), l2 = document.createElement('span'), caret = document.createElement('span');
     l2.className = 'l2'; caret.className = 'caret';
     head.append(l1, caret);
-    await typeInto(l1, S.hero.headline[0], 70);
+    await typeInto(l1, S.hero.headline[0], 90);
     head.insertBefore(br, caret); head.insertBefore(l2, caret);
-    await sleep(160);
-    await typeInto(l2, S.hero.headline[1], 70);
+    await sleep(220);
+    await typeInto(l2, S.hero.headline[1], 80);
     intensity = 1;
     hero.classList.add('done');
   }
   run();
 
   /* =====================================================
-     ABOUT STRIP — drifting topographic contours
+     ABOUT — the highlight reel
      ===================================================== */
-  document.getElementById('aboutShort').textContent = S.aboutShort;
-  const aboutSec = document.getElementById('about');
-  const AC = fitCanvas(document.getElementById('aboutCanvas'));
-  // smooth 3D value noise
-  const P = new Uint8Array(512); { const p = [...Array(256).keys()]; const r = rng(3); for (let i = 255; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; } for (let i = 0; i < 512; i++) P[i] = p[i & 255]; }
-  const fade = t => t * t * t * (t * (t * 6 - 15) + 10);
-  function vnoise(x, y, z) {
-    const X = Math.floor(x) & 255, Y = Math.floor(y) & 255, Z = Math.floor(z) & 255;
-    x -= Math.floor(x); y -= Math.floor(y); z -= Math.floor(z);
-    const u = fade(x), v = fade(y), w = fade(z);
-    const h = (i, j, k) => P[P[P[X + i] + Y + j] + Z + k] / 255;
-    return lerp(lerp(lerp(h(0, 0, 0), h(1, 0, 0), u), lerp(h(0, 1, 0), h(1, 1, 0), u), v), lerp(lerp(h(0, 0, 1), h(1, 0, 1), u), lerp(h(0, 1, 1), h(1, 1, 1), u), v), w);
-  }
-  const MS = { 1: [[3, 0]], 2: [[0, 1]], 3: [[3, 1]], 4: [[1, 2]], 5: [[3, 0], [1, 2]], 6: [[0, 2]], 7: [[3, 2]], 8: [[2, 3]], 9: [[0, 2]], 10: [[0, 1], [2, 3]], 11: [[1, 2]], 12: [[1, 3]], 13: [[0, 1]], 14: [[0, 3]] };
-  loopWhileVisible(aboutSec, (dt, t) => {
-    const ctx = AC.ctx, W = AC.w, H = AC.h, cs = W < 700 ? 16 : 20;
-    ctx.clearRect(0, 0, W, H);
-    const nx = Math.ceil(W / cs) + 1, ny = Math.ceil(H / cs) + 1, z = t * 0.06;
-    const f = new Float32Array(nx * ny);
-    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) f[j * nx + i] = vnoise(i * 0.06, j * 0.06, z) * 0.7 + vnoise(i * 0.15, j * 0.15, z * 1.7) * 0.3;
-    const levels = 10;
-    for (let L = 1; L < levels; L++) {
-      const th = L / levels;
-      const hi = L === 5;
-      ctx.strokeStyle = hi ? 'rgba(124,255,178,.22)' : `rgba(94,230,255,${0.05 + 0.06 * (L % 3 === 0)})`;
-      ctx.lineWidth = hi ? 1.2 : 1;
-      ctx.beginPath();
-      for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
-        const a = f[j * nx + i], b = f[j * nx + i + 1], c = f[(j + 1) * nx + i + 1], d = f[(j + 1) * nx + i];
-        const idx = (a > th) | ((b > th) << 1) | ((c > th) << 2) | ((d > th) << 3);
-        if (idx === 0 || idx === 15) continue;
-        const x = i * cs, y = j * cs;
-        const e = [
-          [x + cs * (th - a) / (b - a), y], [x + cs, y + cs * (th - b) / (c - b)],
-          [x + cs * (th - d) / (c - d), y + cs], [x, y + cs * (th - a) / (d - a)],
-        ];
-        const seg = MS[idx];
-        for (const [p, q] of seg) { ctx.moveTo(e[p][0], e[p][1]); ctx.lineTo(e[q][0], e[q][1]); }
-      }
-      ctx.stroke();
-    }
+  const reel = document.getElementById('reel');
+  S.reel.forEach(([big, label, detail], i) => {
+    const d = document.createElement('div'); d.className = `hl reveal d${(i % 4) + 1}`;
+    d.innerHTML = `<b>${big}</b><span class="rl">${label}</span><p>${detail}</p>`;
+    reel.append(d); observeReveal(d);
   });
 
   /* =====================================================

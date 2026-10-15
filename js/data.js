@@ -12,12 +12,7 @@ window.SITE = {
     mail: 'mailto:amaan.vora.e@gmail.com',
   },
 
-  hero: {
-    // typed in the terminal before the headline
-    prelude: ['whoami', 'cat ./mission.txt'],
-    headline: ['Turning noise', 'into signal.'],
-    sub: 'Data scientist in healthcare. I build models that explain themselves — and interfaces that let you poke at them.',
-  },
+  hero: { headline: ['data.', 'demystified.'] },
 
   aboutShort:
     "I'm Amaan — a data scientist at Virtua Health, trained in statistics (M.S., Rutgers) and computer science (B.Tech, SRM). " +
@@ -230,7 +225,18 @@ window.SITE = {
     { name: 'Machine Learning Specialization — University of Washington', img: 'assets/certs/uw-machine-learning.jpg' },
     { name: 'NVIDIA DLI — Fundamentals of Deep Learning', img: 'assets/certs/nvidia-dli.jpg' },
     { name: 'Kaggle — Python, Data Science, Data Cleaning, Visualization, ML, AI', img: 'assets/certs/kaggle.jpg' },
-    { name: 'Certified Ethical Hacking Expert (L1) — TechDefence', img: 'assets/certs/ethical-hacking.jpg' },
+  ],
+
+  /* Home page highlight reel: [big figure, label, detail] */
+  reel: [
+    ['Virtua Health', 'Data Scientist', 'Sole data scientist behind a five-hospital health system’s AI work.'],
+    ['M.S.', 'Statistics (Data Science)', 'Rutgers University, after a B.Tech in Computer Science.'],
+    ['5', 'domains', 'Healthcare, drug discovery, digital media, enterprise tech and statistical research.'],
+    ['750K', 'records per run', 'Sepsis monitoring live across three hospitals, reviewed by clinicians.'],
+    ['4 days → 20 h', 'documentation pipeline', 'Clinical coding rebuilt with Spark and Azure OpenAI; errors from 700+ to 57.'],
+    ['+14%', 'ROC-AUC in drug discovery', 'Graph neural networks for antibacterial candidates at Rutgers NJMS.'],
+    ['Best Paper', 'IRCICD 2022', '250,000 research papers clustered by meaning.'],
+    ['21', 'live labs', 'Every project on this site runs in your browser.'],
   ],
 
   featured: ['stockbroker', 'claims', 'research'],

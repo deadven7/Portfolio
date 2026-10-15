@@ -34,7 +34,7 @@
       ['linkedin', 'LinkedIn', S.links.linkedin],
       ['github', 'GitHub', S.links.github],
       ['kaggle', 'Kaggle', S.links.kaggle],
-      ['mail', S.email, S.links.mail],
+      ['mail', 'Email', S.links.mail],
     ].map(([k, label, href]) => `<a class="social" href="${href}" ${k === 'mail' ? '' : 'target="_blank" rel="noopener"'} aria-label="${label}">${ICONS[k]}<span>${label}</span></a>`).join('');
   };
   document.querySelectorAll('[data-socials]').forEach(el => el.innerHTML = socialsHTML());
