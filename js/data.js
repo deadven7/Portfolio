@@ -227,16 +227,11 @@ window.SITE = {
     { name: 'Kaggle — Python, Data Science, Data Cleaning, Visualization, ML, AI', img: 'assets/certs/kaggle.jpg' },
   ],
 
-  /* Home page highlight reel: [big figure, label, detail] */
-  reel: [
-    ['Virtua Health', 'Data Scientist', 'Sole data scientist behind a five-hospital health system’s AI work.'],
-    ['M.S.', 'Statistics (Data Science)', 'Rutgers University, after a B.Tech in Computer Science.'],
-    ['5', 'domains', 'Healthcare, drug discovery, digital media, enterprise tech and statistical research.'],
-    ['750K', 'records per run', 'Sepsis monitoring live across three hospitals, reviewed by clinicians.'],
-    ['4 days → 20 h', 'documentation pipeline', 'Clinical coding rebuilt with Spark and Azure OpenAI; errors from 700+ to 57.'],
-    ['+14%', 'ROC-AUC in drug discovery', 'Graph neural networks for antibacterial candidates at Rutgers NJMS.'],
-    ['Best Paper', 'IRCICD 2022', '250,000 research papers clustered by meaning.'],
-    ['21', 'live labs', 'Every project on this site runs in your browser.'],
+  /* Home page About: a short narrative, one paragraph per entry */
+  story: [
+    'I’m a data scientist at Virtua Health, a health system in southern New Jersey. Most of my work there is about getting information to clinicians sooner — models that flag risk early, pipelines that read clinical notes, and tools that answer staff questions with the source attached.',
+    'I came to data through computer science at SRM, where my thesis was on organising research papers by what they mean rather than the words they use. A master’s in statistics at Rutgers taught me to be suspicious of my own results. Along the way I’ve worked on customer feedback at Siemens, reader data at The Daily Targum, and drug discovery at Rutgers New Jersey Medical School.',
+    'What ties it together is a simple aim: make the data make sense to the people who have to act on it.',
   ],
 
   featured: ['stockbroker', 'claims', 'research'],

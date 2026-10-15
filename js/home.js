@@ -220,14 +220,10 @@
   run();
 
   /* =====================================================
-     ABOUT — the highlight reel
+     ABOUT — a short narrative
      ===================================================== */
-  const reel = document.getElementById('reel');
-  S.reel.forEach(([big, label, detail], i) => {
-    const d = document.createElement('div'); d.className = `hl reveal d${(i % 4) + 1}`;
-    d.innerHTML = `<b>${big}</b><span class="rl">${label}</span><p>${detail}</p>`;
-    reel.append(d); observeReveal(d);
-  });
+  const story = document.getElementById('storyHome');
+  S.story.forEach((t, i) => { const p = document.createElement('p'); p.className = `reveal d${i + 1}`; p.textContent = t; story.append(p); observeReveal(p); });
 
   /* =====================================================
      FEATURED PROJECTS

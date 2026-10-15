@@ -693,3 +693,8 @@ body[data-page="home"] .footer { border-top-color: rgba(30,39,53,.6); }
 .reel .hl p { margin: 8px 0 0; font-size: 14px; line-height: 1.6; color: #aab4c4; }
 @media (max-width: 960px) { .reel { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .reel { grid-template-columns: 1fr; } .reel .hl { min-height: 0; } }
+
+.story-home { max-width: 70ch; }
+.story-home p { font-size: clamp(17px, 1.7vw, 20px); line-height: 1.8; color: #c3cbd8; margin: 0 0 22px; }
+.story-home p:first-child { color: var(--text); }
+.story-home p:last-child { color: var(--text); margin-bottom: 0; }
