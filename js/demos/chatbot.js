@@ -38,7 +38,7 @@ DEMOS.chatbot = async function (root) {
   <div class="lab-chat">
     <div class="tabs"><button class="on">chat</button><button>inside the model</button><button>teach it</button></div>
     <div class="tabpane on">
-      ${LAB.explain(`<p><b>What you're seeing:</b> a help-desk assistant for a small shop. It works out what you're asking — a greeting, opening hours, what the shop sells — and replies from a set list of answers. ${LAB.badge('live')}</p><p><b>Technical:</b> the repo's <code>intents.json</code>, turned into bag-of-words vectors after tokenising and stemming, feeds the same network as <code>main.py</code>: two hidden layers of 8 units and a softmax over the intents, trained for 1,000 epochs in your browser when the lab loads.</p><p><b>Try:</b> phrase things it hasn't seen exactly ("when do you close?", "who made you"). Ask something off-topic and watch its confidence drop.</p>`)}
+      ${LAB.explain(`<p><b>What you're seeing:</b> a help-desk assistant for a small café. It works out what you're asking — a greeting, opening hours, the menu, its name or age — and replies from a set list of answers. ${LAB.badge('live')}</p><p><b>Technical:</b> the repo's <code>intents.json</code>, turned into bag-of-words vectors after tokenising and stemming, feeds the same network as <code>main.py</code>: two hidden layers of 8 units and a softmax over the intents, trained for 1,000 epochs in your browser when the lab loads.</p><p><b>Try:</b> phrase things a little differently from its examples ("when are you open?", "what should I call you?"). Ask something off-topic and watch its confidence drop.</p>`)}
       <div class="grid-main"><div class="win"><div class="bar"><i></i>support · <span id="st">training…</span></div><div class="clog" id="log"></div><div class="chips" id="sug"></div><form id="f"><input id="in" placeholder="Type a message…" autocomplete="off"><button>send</button></form></div>
       <div class="panel"><h4><b>what it heard</b><span>intent confidence</span></h4><canvas class="chart" id="pr" style="height:240px"></canvas><p class="note" id="toks"></p></div></div>
     </div>
@@ -70,7 +70,7 @@ Yes — standard shipping takes 3–5 days.</textarea></label><button class="btn
   $('f').addEventListener('submit', e => { e.preventDefault(); const v = $('in').value.trim(); if (!v || !net) return; say(v, 'u'); $('in').value = ''; reply(v); });
   $('sug').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON' || !net) return; say(e.target.textContent, 'u'); reply(e.target.textContent); });
   const lsP = new Plot($('ls'), { pad: { l: 44, b: 30 } });
-  function ready(hist, data) { $('st').textContent = 'online'; $('sug').innerHTML = ['Hello', 'What do you sell?', 'When do you close?', 'How old are you?', 'Tell me about quantum physics'].map(s => `<button type="button">${s}</button>`).join('');
+  function ready(hist, data) { $('st').textContent = 'online'; $('sug').innerHTML = ['Hello', 'What’s on the menu?', 'When are you open?', 'What should I call you?', 'Tell me about quantum physics'].map(s => `<button type="button">${s}</button>`).join('');
     if (!$('log').children.length) say('Hi! Ask me about the shop.', 'b', 'greeting');
     lsP.render = p => { p.frame(0, hist.length * 10, 0, Math.max(...hist)).axes({ xLabel: 'epoch' }); p.line(hist.map((_, i) => i * 10), hist, { color: getComputedStyle(document.body).getPropertyValue('--accent').trim(), width: 2 }); }; lsP.redraw();
     $('vn').textContent = `${vocab.length} stems`; $('vc').textContent = vocab.join('  ·  ');
