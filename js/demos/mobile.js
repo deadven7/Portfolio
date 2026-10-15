@@ -59,7 +59,7 @@ DEMOS.mobile = async function (root) {
   iP.redraw();
   // models
   const pred = te.map(i => sm.predict(Xs[i]));
-  const rf = ML.forest(tr.map(i => X[i]), tr.map(i => y[i]), { K: 4, trees: 30, depth: 10 }), tree = ML.tree(tr.map(i => X[i]), tr.map(i => y[i]), { K: 4, depth: 10 }), kn = ML.knn(tr.map(i => Xs[i]), tr.map(i => y[i]), 9, 'cls', 4);
+  const rf = await ML.forestA(tr.map(i => X[i]), tr.map(i => y[i]), { K: 4, trees: 30, depth: 10 }), tree = ML.tree(tr.map(i => X[i]), tr.map(i => y[i]), { K: 4, depth: 10 }), kn = ML.knn(tr.map(i => Xs[i]), tr.map(i => y[i]), 9, 'cls', 4);
   $('mK').innerHTML = [['softmax regression', acc(i => sm.predict(Xs[i]))], ['random forest (30 trees)', acc(i => ML.argmax(rf.out(X[i])))], ['decision tree', acc(i => ML.argmax(tree.out(X[i])))], ['kNN (k = 9)', acc(i => ML.argmax(kn.out(Xs[i])))]].map(([k, v]) => `<div class="kpi"><span>${k} · held-out</span><b>${(v * 100).toFixed(1)}%</b></div>`).join('');
   const cm = [0, 1, 2, 3].map(a => [0, 1, 2, 3].map(b => te.filter((i, k) => y[i] === a && pred[k] === b).length));
   $('mCM').innerHTML = `<table class="tbl"><tr><th>actual \\ predicted</th>${TIER.map(t => `<th>${t}</th>`).join('')}</tr>${cm.map((r, a) => `<tr><td>${TIER[a]}</td>${r.map((v, b) => `<td class="mono" style="${a === b ? 'color:var(--accent)' : v ? 'color:#ff8a8a' : 'color:var(--dim)'}">${v}</td>`).join('')}</tr>`).join('')}</table>`;

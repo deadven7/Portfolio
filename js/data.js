@@ -22,7 +22,7 @@ window.SITE = {
   /* Horizontal timeline on the home page (oldest → newest) */
   work: [
     { org: 'Kaiser Exports', role: 'Freelance Web Developer', dates: 'Sep – Dec 2020', logo: 'assets/logos/kaiser.png', orgLine: 'A pharmaceutical exporter serving markets in Africa and South America.', roleLine: 'Built two websites for the business.' },
-    { org: 'Siemens', role: 'GBS Intern · ML Team', dates: 'Jun – Aug 2021', logo: 'assets/logos/siemens.png', orgLine: 'A global technology company; I was with its services arm in India.', roleLine: 'Clustered customer comments in 14 languages; automated file registration.' },
+    { org: 'Siemens', role: 'Machine Learning Engineer', dates: 'Jun – Aug 2021', logo: 'assets/logos/siemens.png', orgLine: 'A global technology company; I was with its services arm in India.', roleLine: 'Clustered customer comments in 14 languages; automated file registration.' },
     { org: 'Rutgers University', role: 'AI/ML Graduate Research Assistant', dates: 'Jan – Jul 2023', logo: 'assets/logos/rutgers.png', orgLine: 'A public research university; I worked in the Department of Statistics.', roleLine: 'Standardised model-training workflows; applied causal inference in research.' },
     { org: 'The Daily Targum', role: 'Lead Developer', dates: 'Aug 2023 – May 2024', logo: 'assets/logos/targum.png', orgLine: 'Rutgers University’s student newspaper, founded in 1869.', roleLine: 'Led website development and built models and dashboards for the editorial board.' },
     { org: 'Rutgers NJ Medical School', role: 'ML Research Engineer', dates: 'Oct 2024 – Dec 2025', logo: 'assets/logos/rutgers.png', orgLine: 'Rutgers’ medical school in Newark; a drug-discovery research group.', roleLine: 'Built molecular property models and literature-search tools.' },
@@ -64,7 +64,7 @@ window.SITE = {
     {
       key: 'njms', kind: 'work',
       org: 'Rutgers New Jersey Medical School', role: 'Machine Learning Research Engineer', dates: 'Oct 2024 – Dec 2025', place: 'Newark, NJ',
-      logo: 'assets/logos/rutgers.png', accent: '#cc0033',
+      logo: 'assets/logos/rutgers.png', plate: 'dark', accent: '#cc0033',
       about: 'Rutgers New Jersey Medical School is Rutgers University’s medical school in Newark. I worked in Prof. Joel Freundlich’s drug-discovery research group.',
       summary: 'I built models that predict molecular properties for drug discovery, the validation framework used to compare them, and language-model tools for searching the scientific literature.',
       domains: ['Molecular property prediction', 'Graph neural networks', 'Hyperparameter optimisation', 'Statistical validation', 'Scientific NLP', 'Semantic search'],
@@ -90,7 +90,7 @@ window.SITE = {
     {
       key: 'targum', kind: 'work',
       org: 'The Daily Targum', role: 'Lead Developer', dates: 'Aug 2023 – May 2024', place: 'New Brunswick, NJ',
-      logo: 'assets/logos/targum.png', accent: '#e9c46a',
+      logo: 'assets/logos/targum.png', plate: 'dark', accent: '#e9c46a',
       about: 'The Daily Targum is Rutgers University’s student newspaper, founded in 1869.',
       summary: 'I led development of the paper’s website and built the models and dashboards the editorial board used for content decisions.',
       domains: ['Web development', 'Cloud infrastructure', 'Forecasting', 'Recommender systems', 'Text classification', 'Analytics and reporting'],
@@ -113,7 +113,7 @@ window.SITE = {
     {
       key: 'rutgers-ra', kind: 'work',
       org: 'Rutgers University', role: 'AI/ML Graduate Research Assistant', dates: 'Jan 2023 – Jul 2023', place: 'New Brunswick, NJ',
-      logo: 'assets/logos/rutgers.png', accent: '#cc0033',
+      logo: 'assets/logos/rutgers.png', plate: 'dark', accent: '#cc0033',
       about: 'Rutgers, The State University of New Jersey, is a public research university. I worked with faculty in the Department of Statistics.',
       summary: 'I standardised the research group’s model-training workflows and applied causal-inference methods in faculty research.',
       domains: ['Machine learning', 'Reproducible pipelines', 'Causal inference', 'Model evaluation'],
@@ -133,9 +133,9 @@ window.SITE = {
     },
     {
       key: 'siemens', kind: 'work',
-      org: 'Siemens', role: 'Global Business Services Intern, Machine Learning Team', dates: 'Jun 2021 – Aug 2021', place: 'India',
+      org: 'Siemens', role: 'Machine Learning Engineer', dates: 'Jun 2021 – Aug 2021', place: 'India',
       logo: 'assets/logos/siemens.png', accent: '#3cc3c9',
-      about: 'Siemens is a global technology company. I interned with Siemens Technology and Services in India.',
+      about: 'Siemens is a global technology company. I worked with Siemens Technology and Services in India.',
       summary: 'I built a file-registration automation tool on my own and worked in an international team clustering customer comments written in 14 languages.',
       domains: ['Natural language processing', 'Topic modelling', 'Clustering', 'Process automation'],
       stack: [
@@ -166,43 +166,6 @@ window.SITE = {
           'Kaiser Pharmaceuticals: a product catalogue with pages for each therapeutic category, including antibiotics, cardiovasculars, antidiabetics, respiratories and nutraceuticals.',
           'Aura Packaging: a site for the packaging business, covering primary, secondary and tertiary packaging.',
           'Worked directly with the company’s management on content and requirements.' ] },
-      ],
-    },
-    {
-      key: 'rutgers-ms', kind: 'edu',
-      org: 'Rutgers University', role: 'M.S. in Statistics (Data Science)', dates: '2022 – 2024', place: 'New Brunswick, NJ',
-      logo: 'assets/logos/rutgers.png', accent: '#cc0033',
-      labels: ['About the institution', 'What I studied', 'Areas', 'Tools used'],
-      about: 'Rutgers, The State University of New Jersey, is a public research university.',
-      summary: 'A master’s in statistics with a data-science focus: statistical analysis and inference, statistical modelling, machine learning and deep learning.',
-      domains: ['Statistical inference', 'Statistical modelling', 'Machine learning', 'Deep learning', 'Time series', 'Data mining', 'Databases'],
-      stack: [['Tools', 'R, Python, SQL, PyTorch, TensorFlow, PostgreSQL, MongoDB, Tableau, Power BI, BigQuery']],
-      depth: [
-        { p: 'Several projects on this site came from the programme:' },
-        { ul: [
-          'S&P 500 sector analysis and ARIMA forecasting, in R.',
-          'Credit card attrition with logistic, ridge and lasso regression.',
-          'Netflix and college clustering.',
-          'The role of optimizers in neural networks.',
-          'Privacy-preserving face recognition.',
-          'A Twitter search engine on PostgreSQL and MongoDB.' ] },
-      ],
-    },
-    {
-      key: 'srm', kind: 'edu',
-      org: 'SRM Institute of Science and Technology', role: 'B.Tech in Computer Science and Engineering', dates: '2018 – 2022', place: 'Chennai, India',
-      logo: null, mono: 'SRM', accent: '#1f4e9c',
-      labels: ['About the institution', 'What I studied', 'Areas', 'Tools used'],
-      about: 'SRM Institute of Science and Technology is a private university in Chennai, India.',
-      summary: 'Computer science with electives in artificial intelligence, advanced calculus and probability, fuzzy logic and genetic programming.',
-      domains: ['Algorithms and data structures', 'Artificial intelligence', 'Machine learning', 'NLP'],
-      stack: [['Tools', 'Python, R, Java, C, C++, HTML, CSS, JavaScript']],
-      depth: [
-        { ul: [
-          'Thesis: clustering scientific research papers with transformer embeddings and topic modelling. It won Best Paper at IRCICD 2022.',
-          'Programming courses each required 100 solved programs and a presentation on one of them.',
-          'Completed the University of Washington Machine Learning Specialization and the Google Data Analytics Professional Certificate during the degree.',
-          'Interned at Siemens and freelanced for Kaiser Exports during the degree.' ] },
       ],
     },
   ],

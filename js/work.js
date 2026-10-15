@@ -29,12 +29,12 @@
     { side: -1, door: 129.7, s0: 116, s1: 142, accent: '#e9c46a' },
     { side: 1, door: 167, s0: 154, s1: 180, accent: '#2a7de1' },
   ];
-  /* five buildings; the university building holds the research and education entries */
+  /* five buildings; the university building holds both Rutgers roles */
   const EXP = SITE.experience, byKey = k => EXP.find(e => e.key === k);
   const GROUPS = [
     { keys: ['kaiser'], pin: 'Kaiser' },
     { keys: ['siemens'], pin: 'Siemens' },
-    { keys: ['njms', 'rutgers-ra', 'rutgers-ms', 'srm'], pin: 'Rutgers', org: 'Rutgers University', role: 'Research · M.S. · and where it started', dates: '2018 – 2025', plaque: 'Rutgers University' },
+    { keys: ['rutgers-ra', 'njms'], pin: 'Rutgers', org: 'Rutgers University', role: 'Research Assistant · ML Research Engineer', dates: '2023 – 2025', plaque: 'Rutgers University' },
     { keys: ['targum'], pin: 'Targum' },
     { keys: ['virtua'], pin: 'Virtua' },
   ];
@@ -919,7 +919,7 @@
     seen.add(o.idx); map.querySelector(`.pin[data-i="${o.idx}"]`).classList.add('seen');
   }
   const esc = t => String(t);
-  function logoHTML(e) { const img = e.logo ? `<img src="${e.logo}" alt="" onerror="this.parentNode.classList.add('none');this.remove()">` : ''; return `<div class="wm-logo${img ? '' : ' none'}" style="--acc:${e.accent}">${img}<span>${e.mono || e.org.replace(/^The /, '').slice(0, 1)}</span></div>`; }
+  function logoHTML(e) { const img = e.logo ? `<img src="${e.logo}" alt="" onerror="this.parentNode.classList.add('none');this.remove()">` : ''; return `<div class="wm-logo${img ? '' : ' none'}${e.plate === 'dark' ? ' dark' : ''}" style="--acc:${e.accent}">${img}<span>${e.mono || e.org.replace(/^The /, '').slice(0, 1)}</span></div>`; }
   function entryHTML(e) {
     const L = e.labels || ['About the organisation', 'My role', 'Domains', 'Tech stack'];
     const depth = e.depth.map(b => (b.h ? `<h4>${b.h}</h4>` : '') + (b.p ? `<p>${b.p}</p>` : '') + (b.ul ? `<ul>${b.ul.map(x => `<li>${x}</li>`).join('')}</ul>` : '')).join('');
@@ -955,7 +955,7 @@
   modal.addEventListener('click', e => { if (e.target === modal) leave(); });
   document.getElementById('walkList').addEventListener('click', () => {
     if (mode !== 'walk') return;
-    openModal(`<div class="wm-top"><a class="wm-tldr" href="${SITE.resume}" download><b>TL;DR</b> download résumé <i>↓</i></a></div><div class="wm-list"><h2 id="wmOrg" style="margin:0 0 6px">Work &amp; education</h2>${EXP.map((e, i) => `<button class="wm-item" data-i="${i}"><h3>${e.org}</h3><p class="mono">${e.role} · ${e.dates}</p><p>${e.summary}</p><span class="wm-more">read more →</span></button>`).join('')}</div>${EXIT}`);
+    openModal(`<div class="wm-top"><a class="wm-tldr" href="${SITE.resume}" download><b>TL;DR</b> download résumé <i>↓</i></a></div><div class="wm-list"><h2 id="wmOrg" style="margin:0 0 6px">Work</h2>${EXP.map((e, i) => `<button class="wm-item" data-i="${i}"><h3>${e.org}</h3><p class="mono">${e.role} · ${e.dates}</p><p>${e.summary}</p><span class="wm-more">read more →</span></button>`).join('')}</div>${EXIT}`);
     card.querySelectorAll('.wm-item').forEach(b => b.addEventListener('click', () => { const e = EXP[+b.dataset.i]; card.innerHTML = expHTML([e]) + `<button class="wm-back" type="button">← all entries</button>` + EXIT; card.scrollTop = 0; document.getElementById('wmExit').addEventListener('click', leave); card.querySelector('.wm-back').addEventListener('click', () => { mode = 'walk'; document.getElementById('walkList').click(); }); }));
   });
 

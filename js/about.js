@@ -428,8 +428,10 @@
   }
 
   /* ---------- where things are on screen, so he never sits on them ---------- */
+  let obsFrame = -1, obsCache = null, frameNo = 0; // measured once per frame, not once per caller
   function obstacles() {
-    const out = [], vis = el => { const r = el.getBoundingClientRect(); if (!r.width || r.bottom < 0 || r.top > innerHeight) return; if (+getComputedStyle(el).opacity < .15) return; out.push(r); };
+    if (obsFrame === frameNo && obsCache) return obsCache; obsFrame = frameNo;
+    const out = obsCache = [], vis = el => { const r = el.getBoundingClientRect(); if (!r.width || r.bottom < 0 || r.top > innerHeight) return; if (+getComputedStyle(el).opacity < .15) return; out.push(r); };
     ['.nav', '.mv-title', '.beat.on', '#netFace', '.credits .tbc', '.credits .edu-line', '.credits .roll-cta > *', '.credits .contact-row > *', 'footer .wrap > *'].forEach(q => document.querySelectorAll(q).forEach(vis));
     const sr = stage.getBoundingClientRect();
     if (sr.bottom > 0 && sr.top < innerHeight) { const g = geo(FG.w); g.rows.forEach((y, lv) => { const xs = g.xs[lv]; out.push({ left: Math.min(...xs) - 52, right: Math.max(...xs) + 52, top: sr.top + y - 36, bottom: sr.top + y + 18 }); }); }
@@ -437,7 +439,8 @@
   }
   const hits = (r, obs, pad = 14) => obs.some(o => r.left < o.right + pad && r.right > o.left - pad && r.top < o.bottom + pad && r.bottom > o.top - pad);
   const inView = r => r.left >= 6 && r.top >= 64 && r.right <= innerWidth - 6 && r.bottom <= innerHeight - 4;
-  const heroScale = () => clamp(Math.min(innerWidth, innerHeight) / 1000, .5, .82) * .52;
+  const heroScale = () => clamp(Math.min(innerWidth, innerHeight) / 1000, .5, .82) * .52 * .3; // he's small; his balloon and the cracks keep their size
+  const HS = .3;
   const frontRect = (x, y, s) => ({ left: x - 46 * s, right: x + 46 * s, top: y - 106 * s, bottom: y + 100 * s });
   function freeSpots(s, prefer) { // candidate hover points with nothing underneath, best first
     const W = innerWidth, H = innerHeight, obs = obstacles(), out = [];
@@ -446,7 +449,7 @@
     return out.sort((a, b) => a.d - b.d);
   }
   function knockSpot() {
-    const s = heroScale(), W = innerWidth, obs = obstacles(), bw = Math.min(300 * s * 1.15, W - 24), bh = 100 * s * 1.15;
+    const s = heroScale(), W = innerWidth, obs = obstacles(), bw = Math.min(300 * s / HS * 1.15, W - 24), bh = 100 * s / HS * 1.15;
     for (const sp of freeSpots(s)) {
       const fr = frontRect(sp.x, sp.y, s), right = sp.x > W / 2;
       const opts = [right ? { left: fr.left - bw - 6, top: fr.top - 10 } : { left: fr.right + 6, top: fr.top - 10 }, { left: clamp(sp.x - bw / 2, 8, W - bw - 8), top: fr.top - bh - 12 }];
@@ -533,7 +536,8 @@
 
   let lastT = performance.now();
   (function loop(n) {
-    requestAnimationFrame(loop);
+    requestAnimationFrame(loop); frameNo++;
+    if (document.hidden) { lastT = n; return; }
     const dt = Math.min(.05, (n - lastT) / 1000); lastT = n; const tt = n / 1000, since = tt - t0 - T_ON;
     const c = CP.ctx, W = CP.w, H = CP.h; c.clearRect(0, 0, W, H);
     const show = RM ? 1 : span(since, 1.3, 2.4), s = heroScale(); act.t += dt;
@@ -586,7 +590,7 @@
       // he turns to face us, hovering, and raps on the glass twice
       const sp = act.spot, t = act.t, turn = clamp(t / .22, 0, 1), sq = .2 + .8 * turn, bob = Math.sin(tt * 2.2) * 3 * s;
       act.pos = { x: sp.x, y: sp.y + bob };
-      const knockAt = (tk, i, size) => { const d = t - tk, z = d > 0 && d < .22 ? Math.sin(Math.PI * d / .22) : 0; if (d >= .11 && !act.knocked[i]) { act.knocked[i] = true; const hp = act.hand || [sp.x, sp.y - 70 * s]; cracks.push(makeCrack(hp[0], hp[1], size * s, Math.floor(performance.now()))); runGlass(); } return z; };
+      const knockAt = (tk, i, size) => { const d = t - tk, z = d > 0 && d < .22 ? Math.sin(Math.PI * d / .22) : 0; if (d >= .11 && !act.knocked[i]) { act.knocked[i] = true; const hp = act.hand || [sp.x, sp.y - 70 * s]; cracks.push(makeCrack(hp[0], hp[1], size * s / HS, Math.floor(performance.now()))); runGlass(); } return z; };
       const z = Math.max(knockAt(.6, 0, 70), knockAt(.95, 1, 120)), wph = (t - 1.7) % 4.5, waving = t > 1.7 && wph < 1.3;
       const hand = sp.side > 0 ? 'L' : 'R', P = { L: 'hip', R: 'hip', knock: z, look, t: tt };
       if (t > .3 && t < 1.6) P[hand] = 'knock'; else if (waving) { P[hand] = 'wave'; P.wave = Math.sin(wph * 12); }

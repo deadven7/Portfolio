@@ -141,13 +141,14 @@ DEMOS.stockbroker = async function (root, P) {
     return node;
   }
   const predTree = (t, x) => t.f === undefined ? t.v : predTree(x[t.f] <= t.t ? t.l : t.r, x);
-  function forest(X, y, clf, nTrees, seed, params) {
+  const yieldUI = () => new Promise(r => setTimeout(r, 0));
+  async function forest(X, y, clf, nTrees, seed, params) { // yields every few trees so the page never freezes while it trains
     const r = rng(seed), imp = new Array(X[0].length).fill(0), trees = [];
-    for (let k = 0; k < nTrees; k++) { const idx = X.map(() => Math.floor(r() * X.length)); trees.push(buildTree(X, y, idx, { clf, ...params, imp }, r)); }
+    for (let k = 0; k < nTrees; k++) { const idx = X.map(() => Math.floor(r() * X.length)); trees.push(buildTree(X, y, idx, { clf, ...params, imp }, r)); if (k % 4 === 3) await yieldUI(); }
     const tot = imp.reduce((a, b) => a + b, 0) || 1;
     return { predict: x => mean(trees.map(t => predTree(t, x))), importance: imp.map(v => v / tot) };
   }
-  function train_models(df) {
+  async function train_models(df) {
     const n = df.c.length, rows = [];
     for (let i = 0; i < n - 1; i++) rows.push(i);
     const X = rows.map(i => ML_FEATS.map(f => df[f][i])), yP = rows.map(i => df.c[i + 1]), yD = rows.map(i => df.c[i + 1] > df.c[i] ? 1 : 0), yR = rows.map(i => df.c[i + 1] / df.c[i] - 1);
@@ -155,7 +156,7 @@ DEMOS.stockbroker = async function (root, P) {
     const mu = ML_FEATS.map((_, j) => mean(X.slice(0, split).map(r => r[j]))), sd = ML_FEATS.map((_, j) => std(X.slice(0, split).map(r => r[j]), 0) || 1);
     const Z = X.map(r => r.map((v, j) => (v - mu[j]) / sd[j])), Ztr = Z.slice(0, split), Zte = Z.slice(split);
     const params = { maxDepth: Math.min(10, ML_FEATS.length), minSplit: Math.max(5, Math.floor(split / 20)), minLeaf: Math.max(2, Math.floor(split / 50)) };
-    const rfP = forest(Ztr, yP.slice(0, split), false, 50, 42, params), rfD = forest(Ztr, yD.slice(0, split), true, 50, 43, params), rfR = forest(Ztr, yR.slice(0, split), false, 50, 44, params);
+    const rfP = await forest(Ztr, yP.slice(0, split), false, 50, 42, params), rfD = await forest(Ztr, yD.slice(0, split), true, 50, 43, params), rfR = await forest(Ztr, yR.slice(0, split), false, 50, 44, params);
     const pp = Zte.map(rfP.predict), dprob = Zte.map(rfD.predict), dp = dprob.map(p => p > .5 ? 1 : 0), rp = Zte.map(rfR.predict);
     const yPt = yP.slice(split), yDt = yD.slice(split), yRt = yR.slice(split);
     return { split, params, idx: rows.slice(split), price_predictions: pp, direction_probabilities: dprob, test_actual_prices: yPt, test_dir: yDt,
@@ -402,7 +403,7 @@ DEMOS.stockbroker = async function (root, P) {
     const F = Object.fromEntries(TT.map((t, i) => [t, create_forecasts(data[t], 5, 7 + i)]));
     log('Phase 4: Training ML models...'); await tick();
     const ML = {};
-    for (const t of TT) { ML[t] = train_models(data[t]); log(`  ✅ ML models trained for ${t} - Price RMSE: ${ML[t].price_rmse.toFixed(2)}, Dir Accuracy: ${(ML[t].direction_accuracy * 100).toFixed(2)}%`, 'hit'); await tick(); }
+    for (const t of TT) { ML[t] = await train_models(data[t]); log(`  ✅ ML models trained for ${t} - Price RMSE: ${ML[t].price_rmse.toFixed(2)}, Dir Accuracy: ${(ML[t].direction_accuracy * 100).toFixed(2)}%`, 'hit'); await tick(); }
     log('Phase 5: Optimizing portfolio...'); await tick();
     const PM = optimize_portfolio(data, value);
     log(`  ✅ Portfolio optimized using ${PM.optimization_method} · Expected Return ${(PM.expected_return * 100).toFixed(2)}% · Volatility ${(PM.volatility * 100).toFixed(2)}% · Sharpe ${PM.sharpe_ratio.toFixed(2)}`, 'hit');

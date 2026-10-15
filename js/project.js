@@ -27,6 +27,7 @@
   if (P.overview) { const lab = document.getElementById('lab'), ov = document.createElement('details'); ov.className = 'p-ov'; ov.open = true;
     ov.innerHTML = `<summary>Project overview</summary><div class="ov-grid">${P.overview.map(([k, items]) => `<section><h3>${k}</h3><ul>${items.map(x => `<li>${x}</li>`).join('')}</ul></section>`).join('')}</div>`;
     lab.before(ov); }
+  requestAnimationFrame(() => document.body.classList.remove('pd-boot'));
   document.getElementById('story').innerHTML = `
     <div><p class="eyebrow">the project</p><p class="lede tech" style="margin-top:0">${P.tagline}</p>${P.summary.map(s => `<p>${s}</p>`).join('')}<div class="chips" style="margin-top:14px">${P.stack.map(s => `<span class="chip">${s}</span>`).join('')}</div></div>
     <div><p class="eyebrow">pipeline</p><ol class="pipeline">${P.pipeline.map(s => `<li>${s}</li>`).join('')}</ol></div>`;
@@ -42,6 +43,7 @@
         if (sec) p.querySelectorAll(':scope > .explain').forEach(ex => { const tech = ex.querySelector('.tech') || ex.appendChild(Object.assign(document.createElement('div'), { className: 'tech' })); [...ex.children].filter(c => c !== tech).forEach(c => tech.append(c)); ex.prepend(Object.assign(document.createElement('p'), { textContent: sec[1] })); });
         if (btns[i] || sec) p.insertAdjacentHTML('afterbegin', `<h3 class="ch-h"><span>${String(i + 1).padStart(2, '0')}</span>${sec ? sec[0] : btns[i].textContent}</h3>`); p.dispatchEvent(new Event('show')); });
       wrap.querySelector(':scope > .tabs').remove(); }
+    document.body.classList.remove('lab-loading');
     dispatchEvent(new Event('resize'));
     if (location.hash === '#lab') setTimeout(() => document.getElementById('lab').scrollIntoView(), 60);
   }
@@ -50,9 +52,9 @@
   s.src = `js/demos/${P.demo}.js`;
   s.onload = () => {
     const body = document.getElementById('labBody'); body.innerHTML = '';
-    try { Promise.resolve(window.DEMOS[P.demo](body, P)).then(() => chapters(body)).catch(e => console.error(e)); }
+    try { Promise.resolve(window.DEMOS[P.demo](body, P)).then(() => chapters(body)).catch(e => { console.error(e); document.body.classList.remove('lab-loading'); }); }
     catch (e) { console.error(e); body.innerHTML = '<p class="note">The lab failed to start in this browser.</p>'; }
   };
-  s.onerror = () => { document.getElementById('labBody').innerHTML = '<p class="note">Lab not found.</p>'; };
+  s.onerror = () => { document.getElementById('labBody').innerHTML = '<p class="note">Lab not found.</p>'; document.body.classList.remove('lab-loading'); };
   document.body.append(s);
 })();

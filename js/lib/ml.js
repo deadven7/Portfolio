@@ -53,6 +53,14 @@
     const gains = Array(d).fill(0); T.forEach(t => t.gains.forEach((g, j) => gains[j] += g)); const S = gains.reduce((a, b) => a + b, 0) || 1;
     return { out, importance: gains.map(g => g / S) };
   };
+  // same forest, but hands the main thread back every few trees so the page stays responsive while it trains
+  ML.forestA = async (X, y, { trees = 25, task = 'cls', K = 2, depth = 8, minLeaf = 2, seed = 7 } = {}) => {
+    const r = ML.rng(seed), d = X[0].length, mtry = task === 'reg' ? Math.max(1, Math.round(d / 3)) : Math.max(1, Math.round(Math.sqrt(d))), T = [];
+    for (let t = 0; t < trees; t++) { const idx = X.map(() => Math.floor(r() * X.length)); T.push(ML.tree(X, y, { task, K, depth, minLeaf, mtry, r, idx })); if (t % 3 === 2) await new Promise(f => setTimeout(f, 0)); }
+    const out = x => { const o = T.map(t => t.out(x)); return task === 'reg' ? o.reduce((a, b) => a + b, 0) / o.length : o[0].map((_, k) => o.reduce((s, v) => s + v[k], 0) / o.length); };
+    const gains = Array(d).fill(0); T.forEach(t => t.gains.forEach((g, j) => gains[j] += g)); const S = gains.reduce((a, b) => a + b, 0) || 1;
+    return { out, importance: gains.map(g => g / S) };
+  };
   ML.knn = (X, y, k = 5, task = 'cls', K = 2) => ({ out: x => { const d = X.map((p, i) => [p.reduce((s, v, j) => s + (v - x[j]) ** 2, 0), i]).sort((a, b) => a[0] - b[0]).slice(0, k); if (task === 'reg') return d.reduce((s, [, i]) => s + y[i], 0) / k; const c = Array(K).fill(0); d.forEach(([, i]) => c[y[i]]++); return c.map(v => v / k); }, near: (x, n) => X.map((p, i) => [p.reduce((s, v, j) => s + (v - x[j]) ** 2, 0), i]).sort((a, b) => a[0] - b[0]).slice(0, n).map(q => q[1]) });
   ML.argmax = a => a.indexOf(Math.max(...a));
   window.ML = ML;

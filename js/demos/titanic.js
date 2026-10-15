@@ -13,7 +13,7 @@ DEMOS.titanic = async function (root) {
   const [tr, te] = ML.split(X.length, .75, 11);
   const sc = ML.scaler(tr.map(i => X[i])), Xs = X.map(sc.t);
   const lr = ML.logistic(tr.map(i => Xs[i]), tr.map(i => y[i]), { epochs: 400, lr: .4 });
-  const rf = ML.forest(tr.map(i => X[i]), tr.map(i => y[i]), { trees: 40, depth: 7, minLeaf: 3 });
+  const rf = await ML.forestA(tr.map(i => X[i]), tr.map(i => y[i]), { trees: 40, depth: 7, minLeaf: 3 });
   const acc = (f, ids) => ids.filter(i => (f(i) > .5 ? 1 : 0) === y[i]).length / ids.length;
   const lrP = i => lr.p(Xs[i]), rfP = i => rf.out(X[i])[1];
 

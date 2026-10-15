@@ -2,7 +2,9 @@
 (function () {
   // every page opens at the top — on first load, on reload and when coming back — unless a link points at a section
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-  const toTop = () => { if (!location.hash) window.scrollTo(0, 0); };
+  const toTop = () => { if (!location.hash) window.scrollTo({ top: 0, left: 0, behavior: 'instant' }); };
+  // in-page links glide; everything else (reloads, page changes) is instant
+  document.addEventListener('click', e => { const a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a || a.getAttribute('href').length < 2) return; const t = document.querySelector(a.getAttribute('href')); if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' }); history.replaceState(null, '', a.getAttribute('href')); });
   toTop(); addEventListener('load', toTop); addEventListener('pageshow', e => { if (e.persisted) toTop(); });
   const S = window.SITE;
   const ICONS = {

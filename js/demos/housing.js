@@ -11,7 +11,7 @@ DEMOS.housing = async function (root) {
   const NAMES = ['overall quality', 'living area', 'year built', 'basement area', 'garage cars', 'full baths', 'lot size (log)', 'neighbourhood'];
   const X = R.map(feat), y = R.map(r => r[8]);
   const [tr, te] = ML.split(N, .75, 5);
-  const rf = ML.forest(tr.map(i => X[i]), tr.map(i => y[i]), { task: 'reg', trees: 40, depth: 10, minLeaf: 3 });
+  const rf = await ML.forestA(tr.map(i => X[i]), tr.map(i => y[i]), { task: 'reg', trees: 40, depth: 10, minLeaf: 3 });
   const sc = ML.scaler(tr.map(i => X[i])), Xs = X.map(sc.t);
   const usd = v => '$' + Math.round(v).toLocaleString();
   const NBN = { Blmngtn: 'Bloomington Heights', Blueste: 'Bluestem', BrDale: 'Briardale', BrkSide: 'Brookside', ClearCr: 'Clear Creek', CollgCr: 'College Creek', Crawfor: 'Crawford', Edwards: 'Edwards', Gilbert: 'Gilbert', IDOTRR: 'Iowa DOT & Rail Road', MeadowV: 'Meadow Village', Mitchel: 'Mitchell', NAmes: 'North Ames', NPkVill: 'Northpark Villa', NWAmes: 'Northwest Ames', NoRidge: 'Northridge', NridgHt: 'Northridge Heights', OldTown: 'Old Town', SWISU: 'South & West of ISU', Sawyer: 'Sawyer', SawyerW: 'Sawyer West', Somerst: 'Somerset', StoneBr: 'Stone Brook', Timber: 'Timberland', Veenker: 'Veenker' };
