@@ -246,7 +246,7 @@
   S.work.forEach((w, i) => {
     const n = document.createElement('div');
     n.className = 'tnode';
-    n.innerHTML = `<div class="above"><span class="dates">${w.dates}</span><span class="org">${w.org}</span><span class="role">${w.role}</span><div class="logo">${w.logo ? `<img src="${w.logo}" alt="${w.org} logo" loading="lazy">` : `<span class="mono-logo">${w.mono || w.org[0]}</span>`}</div></div>
+    n.innerHTML = `<div class="above"><span class="dates">${w.dates}</span><span class="org">${w.org}</span><span class="role">${w.role}</span><div class="logo">${w.logo ? `<img src="${w.logo}" alt="${w.org} logo" loading="lazy" onerror="this.outerHTML='<span class=&quot;mono-logo&quot;>${w.mono || w.org[0]}</span>'">` : `<span class="mono-logo">${w.mono || w.org[0]}</span>`}</div></div>
       <span class="stem"></span><span class="dot" style="transition-delay:${0.3 + i * 0.35}s"></span><div class="below" style="transition-delay:${0.5 + i * 0.35}s">${w.blurb}</div>`;
     tl.append(n);
   });

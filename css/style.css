@@ -825,3 +825,5 @@ body[data-theme="claims"] .pd-head h1, body[data-theme="publichealth"] .pd-head 
 .p-ov ul { margin: 0; padding-left: 16px; }
 .p-ov li { font-size: 14.5px; line-height: 1.6; color: #cfd6e2; margin-bottom: 6px; }
 html:has(body[data-page="projects"][data-theme]) { background: none; }
+.wm-card { overscroll-behavior: contain; }
+.wm-logo:has(img) { width: auto; min-width: 64px; padding: 0 12px; } .wm-logo img { max-width: 150px; max-height: 40px; }

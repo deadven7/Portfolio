@@ -885,12 +885,12 @@
       cam.target = clamp(Math.min(tgt, cam.s + 14), 0, ZMAX);
     } else { cam.target = clamp(Math.max(cam.target + d, cam.s - 14), 0, ZMAX); STOPS.forEach(s => { if (s.s > cam.target + 1) s.passed = false; }); }
   }
-  addEventListener('wheel', e => { e.preventDefault(); const dy = e.deltaMode ? e.deltaY * 30 : e.deltaY, dx = e.deltaMode ? e.deltaX * 30 : e.deltaX; if (Math.abs(dx) > Math.abs(dy)) { look.ty = clamp(look.ty + dx * .0025, -.6, .6); return; } go(dy * .035); }, { passive: false });
+  addEventListener('wheel', e => { if (mode !== 'walk' || e.target.closest('.wmodal')) return; e.preventDefault(); const dy = e.deltaMode ? e.deltaY * 30 : e.deltaY, dx = e.deltaMode ? e.deltaX * 30 : e.deltaX; if (Math.abs(dx) > Math.abs(dy)) { look.ty = clamp(look.ty + dx * .0025, -.6, .6); return; } go(dy * .035); }, { passive: false });
   addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && mode === 'walk') { look.ty = clamp((e.clientX / innerWidth - .5) * 1.0, -.55, .55); look.tp = clamp(-.02 + (e.clientY / innerHeight - .5) * -.26, -.15, .13); } }, { passive: true });
   document.addEventListener('mouseleave', () => { look.ty = 0; look.tp = -.02; });
   addEventListener('keydown', e => { if (mode === 'inside' && e.key === 'Escape') return leave(); if (mode !== 'walk') return; const k = e.key; if (k === 'ArrowUp' || k === 'w' || k === 'PageDown' || k === ' ') { go(k === 'PageDown' || k === ' ' ? 10 : 3); e.preventDefault(); } if (k === 'ArrowDown' || k === 's' || k === 'PageUp') { go(k === 'PageUp' ? -10 : -3); e.preventDefault(); } if (k === 'ArrowLeft') look.ty = clamp(look.ty - .12, -.6, .6); if (k === 'ArrowRight') look.ty = clamp(look.ty + .12, -.6, .6); if (k === 'Enter' && near) enter(near); });
   let tp = null; addEventListener('touchstart', e => { tp = [e.touches[0].clientX, e.touches[0].clientY]; }, { passive: true });
-  addEventListener('touchmove', e => { if (!tp) return; const x = e.touches[0].clientX, y = e.touches[0].clientY, dx = x - tp[0], dy = y - tp[1]; if (Math.abs(dx) > Math.abs(dy)) look.ty = clamp(look.ty - dx * .004, -.6, .6); else go(-dy * .06); tp = [x, y]; }, { passive: true });
+  addEventListener('touchmove', e => { if (!tp || mode !== 'walk') return; const x = e.touches[0].clientX, y = e.touches[0].clientY, dx = x - tp[0], dy = y - tp[1]; if (Math.abs(dx) > Math.abs(dy)) look.ty = clamp(look.ty - dx * .004, -.6, .6); else go(-dy * .06); tp = [x, y]; }, { passive: true });
   addEventListener('touchend', () => { tp = null; });
   tag.addEventListener('click', () => near && enter(near));
 
@@ -937,7 +937,7 @@
       list.map((e, i) => `<div class="wm-pane" style="--acc:${e.accent}" ${i ? 'hidden' : ''}>${entryHTML(e)}</div>`).join('');
   }
   function wireTabs() { const tb = card.querySelectorAll('.wm-tabs button'), panes = card.querySelectorAll('.wm-pane'); tb.forEach(b => b.addEventListener('click', () => { tb.forEach(x => x.classList.toggle('on', x === b)); panes.forEach((p, i) => p.hidden = i !== +b.dataset.i); card.scrollTop = 0; })); }
-  function openModal(html) { card.innerHTML = html; modal.hidden = false; requestAnimationFrame(() => modal.classList.add('show')); mode = 'inside'; const x = document.getElementById('wmExit'); x.addEventListener('click', leave); x.focus(); }
+  function openModal(html) { card.innerHTML = html; modal.hidden = false; requestAnimationFrame(() => modal.classList.add('show')); mode = 'inside'; card.scrollTop = 0; const x = document.getElementById('wmExit'); x.addEventListener('click', leave); x.focus({ preventScroll: true }); requestAnimationFrame(() => { card.scrollTop = 0; }); }
   async function leave() {
     if (mode !== 'inside') return; mode = 'leaving';
     modal.classList.remove('show'); await wait(260); modal.hidden = true;
