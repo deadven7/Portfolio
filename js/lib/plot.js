@@ -141,7 +141,12 @@
   window.LAB = {
     highlight,
     need(src) { return (window.__need = window.__need || {})[src] || (window.__need[src] = new Promise((res, rej) => { const el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = rej; document.head.append(el); })); },
-    explain(html) { return `<div class="explain">${html}</div>`; },
+    // plain-language paragraphs stay visible; the technical ones fold away for whoever wants them
+    explain(html) {
+      const t = document.createElement('template'); t.innerHTML = html; const keep = [], tech = [];
+      [...t.content.children].forEach(el => { const lead = (el.querySelector('b') || {}).textContent || ''; (/^(What you|Try|Takeaway|How to read|Reading|Why|About the|What it shows|A caveat)/i.test(lead.trim()) ? keep : tech).push(el.outerHTML); });
+      return `<div class="explain">${keep.join('')}${tech.length ? `<details class="tech"><summary>how it works</summary>${tech.join('')}</details>` : ''}</div>`;
+    },
     // placeholder that is filled once snippets.json arrives
     src(slug, keys, note = '') {
       const id = 'src' + Math.random().toString(36).slice(2, 8);
